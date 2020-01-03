@@ -49,7 +49,7 @@ class _LoginpageState extends State<Loginpage> {
       color: Color.fromRGBO(0,21,43,1),
       onPressed: (){
         Navigator.push(context,
-          MaterialPageRoute(builder: (context) => login()),);
+          MaterialPageRoute(builder: (context) => LogIn()),);
       },
       textColor: Colors.white,
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),

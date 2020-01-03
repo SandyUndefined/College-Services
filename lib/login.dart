@@ -1,72 +1,77 @@
 import 'dart:async';
+import 'package:college_services/responsive.dart';
 import 'package:flutter/material.dart';
-import 'package:keyboard_visibility/keyboard_visibility.dart';
-
 import 'Home.dart';
 
-class login extends StatefulWidget {
-  @override
-  _loginState createState() => _loginState();
-}
-class _loginState extends State<login> {
-  @override
-  void initState() {
-    KeyboardVisibilityNotification().addNewListener(
-      onChange: (bool visible) {
-        visible ? scrollToBottom() : scrollToTop();
-      },
-    );
-    super.initState();
-  }
-
-  TextEditingController _rollnumberController = new TextEditingController();
-  TextEditingController _phonenumberController = new TextEditingController();
-  ScrollController _scrollController = ScrollController();
-  FocusNode _focusNodePassword = FocusNode();
-  bool _obsecure = false;
+class LogIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      body: LayoutBuilder(
-          builder:(BuildContext context, BoxConstraints viewportConstraints){
-            return SingleChildScrollView(
-              controller: _scrollController,
-              padding: EdgeInsets.only(top: 120.0, right: 48.0, left: 48.0, bottom: 35.0),
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: viewportConstraints.maxHeight,
-                ),
-                child: Column(
-                  children: <Widget>[
-                    new Image.asset('assets/images/login.png',height: 170, width: 170,),
-                    SizedBox(height: 40.0,),
-                    rollinput("Roll Number",_rollnumberController, false),
-                    SizedBox(height: 20.0,),
-                    passwordinput("Phone Number",_phonenumberController, false),
-                    SizedBox(height: 40.0,),
-                    buildLogInButton(),
-                  ],
-                ),
-              ),
-            );
-          }
+      body: LogInScreen(),
+    );
+  }
+}
+
+class LogInScreen extends StatefulWidget {
+  @override
+  _LogInScreenState createState() => _LogInScreenState();
+}
+
+class _LogInScreenState extends State<LogInScreen> {
+
+  double _height;
+  double _width;
+  double _pixelRatio;
+  bool _large;
+  bool _medium;
+  TextEditingController _rollnumberController = new TextEditingController();
+  TextEditingController _phonenumberController = new TextEditingController();
+  GlobalKey<FormState> _key = GlobalKey();
+  FocusNode _focusNodePassword = FocusNode();
+  bool _obsecure = false;
+
+  @override
+  Widget build(BuildContext context) {
+    _height = MediaQuery.of(context).size.height;
+    _width = MediaQuery.of(context).size.width;
+    _pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    _large =  ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
+    _medium =  ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
+    return Material (
+      child: Container (
+        height: _height,
+        width: _width,
+        padding: EdgeInsets.only(top: 80.0, bottom: 20.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              new Image.asset('assets/images/login.png',height: 170, width: 170,),
+              SizedBox(height: 40.0,),
+              rollinput("Roll Number",_rollnumberController, _obsecure),
+              SizedBox(height: 20.0,),
+              passwordinput("Phone Number",_phonenumberController, _obsecure),
+              SizedBox(height: 40.0,),
+              buildLogInButton(),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget buildLogInButton(){
     return RaisedButton(
-      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+      shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       color: Color.fromRGBO(0,21,43,1),
       onPressed: (){
         Navigator.push(context,
           MaterialPageRoute(builder: (context) => Home()),);
-
       },
       textColor: Colors.white,
-      shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
-      child: Center(
+      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+      child: Container(
+        alignment: Alignment.center,
+        width: _width/1.7,
         child: Text(
           "LogIn",
           style: TextStyle(
@@ -80,6 +85,7 @@ class _loginState extends State<login> {
       bool obsecure) {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20),
+      width: _width/1.3,
       child: TextField(
           keyboardType: TextInputType.number,
           controller: controller,
@@ -99,7 +105,6 @@ class _loginState extends State<login> {
               borderRadius: new BorderRadius.circular(10.0),
             ),
           ),
-          onTap: () => scrollToBottom(),
           onEditingComplete: () {
             /*_focusNodePassword.requestFocus();*/
             FocusScope.of(context).requestFocus(_focusNodePassword);
@@ -107,26 +112,11 @@ class _loginState extends State<login> {
       ),
     );
   }
-  void scrollToTop() {
-    Timer(Duration(milliseconds: 50), (){
-      _scrollController.animateTo(0,
-          duration: Duration(milliseconds: 400),
-          curve: ElasticOutCurve()
-      );
-    });
-  }
 
-  void scrollToBottom() {
-    Timer(Duration(milliseconds: 50), (){
-      _scrollController.animateTo(2000,
-          duration: Duration(milliseconds: 400),
-          curve: ElasticOutCurve()
-      );
-    });
-  }
   Widget passwordinput(String hint, TextEditingController controller,
       bool obsecure) {
     return Container(
+      width: _width/1.3,
       padding: EdgeInsets.only(left: 20, right: 20),
       child: TextField(
           focusNode: _focusNodePassword,
@@ -148,10 +138,8 @@ class _loginState extends State<login> {
               borderRadius: new BorderRadius.circular(10.0),
             ),
           ),
-          onTap: () => scrollToBottom(),
           onEditingComplete: () {
             FocusScope.of(context).requestFocus(new FocusNode());
-            scrollToTop();
           }
       ),
     );
