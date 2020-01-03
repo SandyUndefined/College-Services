@@ -32,7 +32,7 @@ class _LoginpageState extends State<Loginpage> {
         padding: EdgeInsets.only(top: 150.0, right: 48.0, left: 48.0, bottom: 20.0),
         child: Column(
           children: <Widget>[
-            new Image.asset('assets/images/login.png',height: 170, width: 170,),
+            new Image.asset('assets/images/example.png',height: 170, width: 170,),
             SizedBox(height: 50.0,),
             buildLogInButton(),
             SizedBox(height: 30.0,),
@@ -55,7 +55,7 @@ class _LoginpageState extends State<Loginpage> {
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       child: Center(
         child: Text(
-          "LogIn",
+          "Log In",
           style: TextStyle(
             fontSize: 18.0,
           ),
@@ -76,7 +76,7 @@ class _LoginpageState extends State<Loginpage> {
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       child: Center(
         child: Text(
-          "SignUp",
+          "Sign Up",
           style: TextStyle(
             fontSize: 18.0,
           ),

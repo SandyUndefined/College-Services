@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'package:college_services/main.dart';
 import 'package:college_services/responsive.dart';
 import 'package:flutter/material.dart';
 import 'Home.dart';
@@ -45,13 +45,15 @@ class _LogInScreenState extends State<LogInScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
-              new Image.asset('assets/images/login.png',height: 170, width: 170,),
+              new Image.asset('assets/images/example.png',height: 170, width: 170,),
               SizedBox(height: 40.0,),
               rollinput("Roll Number",_rollnumberController, _obsecure),
               SizedBox(height: 20.0,),
               passwordinput("Phone Number",_phonenumberController, _obsecure),
               SizedBox(height: 40.0,),
               buildLogInButton(),
+              SizedBox(height: 10.0,),
+              signUpTextRow(),
             ],
           ),
         ),
@@ -91,18 +93,18 @@ class _LogInScreenState extends State<LogInScreen> {
           controller: controller,
           obscureText: obsecure,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
           ),
           decoration: new InputDecoration(
             labelText: hint,
-            //alignLabelWithHint: true,
+            alignLabelWithHint: true,
             labelStyle: TextStyle(
               color: Colors.black,
             ),
             fillColor: Color.fromRGBO(241, 243, 243, 1),
             filled: true,
             border: new OutlineInputBorder(
-              borderRadius: new BorderRadius.circular(10.0),
+              borderRadius: new BorderRadius.circular(22.0),
             ),
           ),
           onEditingComplete: () {
@@ -124,23 +126,50 @@ class _LogInScreenState extends State<LogInScreen> {
           controller: controller,
           obscureText: obsecure,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
           ),
           decoration: new InputDecoration(
             labelText: hint,
-            //alignLabelWithHint: true,
+            alignLabelWithHint: true,
             labelStyle: TextStyle(
               color: Colors.black,
             ),
             fillColor: Color.fromRGBO(241, 243, 243, 1),
             filled: true,
             border: new OutlineInputBorder(
-              borderRadius: new BorderRadius.circular(10.0),
+              borderRadius: new BorderRadius.circular(22.0),
             ),
           ),
           onEditingComplete: () {
             FocusScope.of(context).requestFocus(new FocusNode());
           }
+      ),
+    );
+  }
+  Widget signUpTextRow() {
+    return Container(
+      margin: EdgeInsets.only(top: _height / 120.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Don't have an account?",
+            style: TextStyle(fontWeight: FontWeight.w400,fontSize: _large? 14: (_medium? 12: 10)),
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              "Sign up",
+              style: TextStyle(
+                  fontWeight: FontWeight.w800, color: Color.fromRGBO(255,188,114, 1), fontSize: _large? 19: (_medium? 17: 15)),
+            ),
+          )
+        ],
       ),
     );
   }
