@@ -72,7 +72,7 @@ class _LoginpageState extends State<Loginpage> {
         Navigator.push(context,
           MaterialPageRoute(builder: (context) => signup()),);
       },
-      textColor: Colors.white,
+      textColor: Colors.black,
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       child: Center(
         child: Text(

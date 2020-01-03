@@ -1,5 +1,6 @@
 import 'package:college_services/main.dart';
 import 'package:college_services/responsive.dart';
+import 'package:college_services/signup.dart';
 import 'package:flutter/material.dart';
 import 'Home.dart';
 
@@ -161,7 +162,7 @@ class _LogInScreenState extends State<LogInScreen> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pop(context);
+              Navigator.push(context,MaterialPageRoute(builder: (context) => signup()),);
             },
             child: Text(
               "Sign up",
