@@ -89,7 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
   Widget name(){
     return CustomTextField(
       keyboardType: TextInputType.text,
-      hint: "Full Nmae",
+      hint: "Full Name",
     );
   }
   Widget phn_number(){
