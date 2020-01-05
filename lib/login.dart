@@ -3,6 +3,7 @@ import 'package:college_services/responsive.dart';
 import 'package:college_services/signup.dart';
 import 'package:flutter/material.dart';
 import 'Home.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class LogIn extends StatelessWidget {
   @override
@@ -30,6 +31,8 @@ class _LogInScreenState extends State<LogInScreen> {
   GlobalKey<FormState> _key = GlobalKey();
   FocusNode _focusNodePassword = FocusNode();
   bool _obsecure = false;
+  ProgressDialog pr;
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +41,21 @@ class _LogInScreenState extends State<LogInScreen> {
     _pixelRatio = MediaQuery.of(context).devicePixelRatio;
     _large =  ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
     _medium =  ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
+
+    pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr.style(message: 'Showing some progress...');
+    pr.style(
+      message: 'Loading...',
+      borderRadius: 3.0,
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
+      progressTextStyle: TextStyle(
+          color: Colors.black, fontSize: 8.0, fontWeight: FontWeight.w400),
+      messageTextStyle: TextStyle(
+          color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.w600),
+    );
     return Material (
       child: Container (
         height: _height,
@@ -67,8 +85,15 @@ class _LogInScreenState extends State<LogInScreen> {
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       color: Color.fromRGBO(0,21,43,1),
       onPressed: (){
-        Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Home()),);
+        pr.show();
+        Future.delayed(Duration(seconds: 10)).then((onValue){
+          print("PR status  ${pr.isShowing()}" );
+          if(pr.isShowing())
+            pr.hide();
+          print("PR status  ${pr.isShowing()}" );
+        });
+       /* Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Home()),);*/
       },
       textColor: Colors.white,
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
