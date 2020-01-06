@@ -1,12 +1,13 @@
 import 'dart:io';
 import 'dart:ui';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:college_services/responsive.dart';
-import 'package:college_services/textformfield.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+import 'package:path/path.dart' as path;
+import 'package:pin_input_text_field/pin_input_text_field.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'Home.dart';
@@ -26,27 +27,43 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen>{
+
   double _height;
   double _width;
   double _pixelRatio;
+
+  String phoneNumber;
+  String smsCode;
+  String VerifyId;
+
   File _Image;
+
   bool _large;
   bool _medium;
-  TextEditingController _rollnumberController = new TextEditingController();
-  TextEditingController _phonenumberController = new TextEditingController();
+  Decoration _pinDecoration;
+
+  TextEditingController _name = new TextEditingController();
+  TextEditingController _phnNumber = new TextEditingController();
+  TextEditingController _rollNumber = new TextEditingController();
+  TextEditingController _college = new TextEditingController();
+  TextEditingController _course = new TextEditingController();
+  TextEditingController _sem = new TextEditingController();
   GlobalKey<FormState> _key = GlobalKey();
   FocusNode _focusNodePassword = FocusNode();
   bool _obsecure = false;
-  ProgressDialog pr;
 
+  ProgressDialog pr;
   String basename;
+
   @override
   Widget build(BuildContext context) {
+
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
     _pixelRatio = MediaQuery.of(context).devicePixelRatio;
     _large =  ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
     _medium =  ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
+
     pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
     pr.style(message: 'Showing some progress...');
     pr.style(
@@ -70,28 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
           padding: EdgeInsets.only(top: 15),
           child: Column(
             children: <Widget>[
-              Container(
-                width: 150,
-                height: 150,
-                decoration: new BoxDecoration(
-                  shape: BoxShape.circle,
-                    boxShadow: [
-                    BoxShadow (
-                    color: const Color.fromRGBO(255,188,114, 1),
-                     offset: Offset(0, 2),
-                      blurRadius: 10,
-                       ),],
-                  border: new Border.all(
-                    color: Color.fromRGBO(255,188,114, 1),
-                    width: 2,
-                  ),
-                ),
-                child: new ClipOval(
-                  child: userProfile(),
-                ),
-              ),
-              /*userProfile(),*/
-              /*new Image.asset(),*/
+              userProfileBorder(),
               SizedBox(height: 40.0,),
               form(),
               SizedBox(height: 40.0,),
@@ -105,6 +101,31 @@ class _SignUpScreenState extends State<SignUpScreen>{
     );
   }
 
+  // ClipOval for User Profile Pictures.
+  Widget userProfileBorder(){
+    return Container(
+      width: 150,
+      height: 150,
+      decoration: new BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow (
+            color: const Color.fromRGBO(255,188,114, 1),
+            offset: Offset(0, 2),
+            blurRadius: 10,
+          ),],
+        border: new Border.all(
+          color: Color.fromRGBO(255,188,114, 1),
+          width: 2,
+        ),
+      ),
+      child: new ClipOval(
+        child: userProfile(),
+      ),
+    );
+  }
+
+  // Default Image for userProfile
   Widget userProfile(){
     return GestureDetector (
       child: (_Image!=null)?Image.file(_Image,fit: BoxFit.fill,):
@@ -113,6 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     );
   }
 
+  //Getting Image from gallery and cropping it.
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     File croppedFile = await ImageCropper.cropImage(
@@ -142,13 +164,14 @@ class _SignUpScreenState extends State<SignUpScreen>{
     });
   }
 
+  //Uploading profile photo to firebase Storage
   Future uploadPic(context) async{
     String filename = "7318724249";
     StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child("User Profile Photo").child(filename);
     StorageUploadTask uploadTask = firebaseStorageRef.putFile(_Image);
     await uploadTask.onComplete;
     setState(() {
-      print("Done");
+      print("le le re baba Done");
     });
   }
 
@@ -179,48 +202,179 @@ class _SignUpScreenState extends State<SignUpScreen>{
   }
 
   Widget name(){
-    return CustomTextField(
-      keyboardType: TextInputType.text,
-      hint: "Full Name",
+    return Material(
+      borderRadius: BorderRadius.circular(22.0),
+      child: TextField(
+        controller: _name,
+        obscureText: false,
+        keyboardType: TextInputType.text,
+        style: TextStyle(
+          fontSize: 14,
+        ),
+        decoration: InputDecoration(
+          labelText: "Full Name",
+          alignLabelWithHint: true,
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+          fillColor: Color.fromRGBO(241, 243, 243, 1),
+          filled: true,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(22.0)
+          ),
+        ),
+      ),
     );
   }
+
+
   Widget phn_number(){
-    return CustomTextField(
-      keyboardType: TextInputType.text,
-      hint: "Phone Number",
+    return Material(
+      borderRadius: BorderRadius.circular(22.0),
+      child: TextField(
+        onChanged: (value){
+          this.phoneNumber = value;
+          print(this.phoneNumber);
+        },
+        controller: _phnNumber,
+        obscureText: false,
+        keyboardType: TextInputType.number,
+        style: TextStyle(
+          fontSize: 14,
+        ),
+        decoration: InputDecoration(
+          labelText: "Phone Number",
+          alignLabelWithHint: true,
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+          fillColor: Color.fromRGBO(241, 243, 243, 1),
+          filled: true,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(22.0)
+          ),
+        ),
+      ),
     );
   }
+
+
   Widget roll_number(){
-    return CustomTextField(
-      keyboardType: TextInputType.text,
-      hint: "Roll Number",
+    return Material(
+      borderRadius: BorderRadius.circular(22.0),
+      child: TextField(
+        controller: _rollNumber,
+        obscureText: false,
+        keyboardType: TextInputType.number,
+        style: TextStyle(
+          fontSize: 14,
+        ),
+        decoration: InputDecoration(
+          labelText: "Roll Number",
+          alignLabelWithHint: true,
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+          fillColor: Color.fromRGBO(241, 243, 243, 1),
+          filled: true,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(22.0)
+          ),
+        ),
+      ),
     );
   }
+
+
   Widget college(){
-    return CustomTextField(
-      keyboardType: TextInputType.text,
-      hint: "College",
+    return Material(
+      borderRadius: BorderRadius.circular(22.0),
+      child: TextField(
+        controller: _college,
+        obscureText: false,
+        keyboardType: TextInputType.text,
+        style: TextStyle(
+          fontSize: 14,
+        ),
+        decoration: InputDecoration(
+          labelText: "College",
+          alignLabelWithHint: true,
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+          fillColor: Color.fromRGBO(241, 243, 243, 1),
+          filled: true,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(22.0)
+          ),
+        ),
+      ),
     );
   }
+
+
   Widget coursename(){
-    return CustomTextField(
-      keyboardType: TextInputType.text,
-      hint: "Course",
+    return Material(
+      borderRadius: BorderRadius.circular(22.0),
+      child: TextField(
+        controller: _course,
+        obscureText: false,
+        keyboardType: TextInputType.text,
+        style: TextStyle(
+          fontSize: 14,
+        ),
+        decoration: InputDecoration(
+          labelText: "Course",
+          alignLabelWithHint: true,
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+          fillColor: Color.fromRGBO(241, 243, 243, 1),
+          filled: true,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(22.0)
+          ),
+        ),
+      ),
     );
   }
+
+
   Widget sem(){
-    return CustomTextField(
-      keyboardType: TextInputType.text,
-      hint: "Semester",
+    return Material(
+      borderRadius: BorderRadius.circular(22.0),
+      child: TextField(
+        controller: _sem,
+        obscureText: false,
+        keyboardType: TextInputType.text,
+        style: TextStyle(
+          fontSize: 14,
+        ),
+        decoration: InputDecoration(
+          labelText: "Semester",
+          alignLabelWithHint: true,
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+          fillColor: Color.fromRGBO(241, 243, 243, 1),
+          filled: true,
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(22.0)
+          ),
+        ),
+      ),
     );
   }
+
 
   Widget buildSignUpButton(){
     return RaisedButton(
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       color: Color.fromRGBO(255,188,114, 1),
       onPressed: () {
-        pr.show();
+        smsCodeDialog(context);
+        /*verifyphn();*/
+        /*pr.show();*/
         uploadPic(context);
        /* Navigator.push(context,
           MaterialPageRoute(builder: (context) => Home()),);
@@ -240,4 +394,79 @@ class _SignUpScreenState extends State<SignUpScreen>{
     );
   }
 
+  Future<void> verifyphn() async {
+
+    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId){
+      this.VerifyId = verId;
+    };
+    final PhoneCodeSent smsCodesent = (String verId,[int forceCodeResend])async{
+      this.VerifyId = verId;
+    };
+    final PhoneVerificationCompleted verifiedSuccess = (AuthCredential user){
+      print("Done");
+      FirebaseAuth.instance.signInWithCredential(user).then((AuthResult value){
+        if(value.user != null){
+          print(value.user.phoneNumber);
+          Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Home()),);
+        }
+      });
+    };
+    final PhoneVerificationFailed verifiedFailed = (AuthException exception){
+      print('${exception.message}');
+      print("Failed");
+    };
+
+    await FirebaseAuth.instance.verifyPhoneNumber(phoneNumber: this.phoneNumber,
+        timeout: const Duration(seconds: 5),
+        verificationCompleted: verifiedSuccess,
+        verificationFailed: verifiedFailed,
+        codeSent: smsCodesent,
+        codeAutoRetrievalTimeout: autoRetrieve,
+    );
+  }
+
+  Future<bool> smsCodeDialog(BuildContext context){
+    return showDialog(
+      context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context){
+      return new AlertDialog(
+        title: Text('Enter Otp here.'),
+        content: PinInputTextField(
+          pinLength: 6,
+          decoration: UnderlineDecoration(),
+          autoFocus: true,
+          textInputAction: TextInputAction.go,
+        ),
+        contentPadding: EdgeInsets.all(10.0),
+        actions: <Widget>[
+          new RaisedButton(
+            child: Text('Submit OTP'),
+            onPressed: (){
+              FirebaseAuth.instance.currentUser().then((user){
+                verifyphn();
+              });
+            },
+          ),
+        ],
+      );
+    },
+    );
+  }
+
+  signUp(BuildContext context){
+    final AuthCredential credential = PhoneAuthProvider.getCredential(
+        verificationId: VerifyId,
+        smsCode: smsCode,
+    );
+    FirebaseAuth.instance.signInWithCredential(credential).then((user){
+      Navigator.push(context,
+        MaterialPageRoute(builder: (context) => Home()),);
+    }).catchError((e){
+      print(e);
+      /*print('Auth Credential Error : $e');*/
+    });
+  }
 }
+
