@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -66,11 +67,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
         width: _width,
         padding: EdgeInsets.only(top: 60.0, bottom: 20.0),
         child: SingleChildScrollView(
+          padding: EdgeInsets.only(top: 15),
           child: Column(
             children: <Widget>[
               Container(
-                width: 180,
-                height: 180,
+                width: 150,
+                height: 150,
                 decoration: new BoxDecoration(
                   shape: BoxShape.circle,
                     boxShadow: [
@@ -124,6 +126,8 @@ class _SignUpScreenState extends State<SignUpScreen>{
         ],
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Crop Image',
+            /*activeWidgetColor: Colors.black,*/
+            activeControlsWidgetColor: Color.fromRGBO(255,188,114, 1),
             toolbarColor: Color.fromRGBO(255,188,114, 1),
             toolbarWidgetColor: Colors.white,
             initAspectRatio: CropAspectRatioPreset.original,
