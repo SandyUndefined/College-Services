@@ -1,16 +1,14 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:college_services/responsive.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as path;
-import 'package:pin_input_text_field/pin_input_text_field.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'Home.dart';
+import 'otp_screen.dart';
+
 
 class signup extends StatelessWidget {
   @override
@@ -54,6 +52,16 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
   ProgressDialog pr;
   String basename;
+  bool isValid = false;
+
+  Future<Null> validate(StateSetter updateState) async {
+    print("in validate : ${_phnNumber.text.length}");
+    if (_phnNumber.text.length == 10) {
+      updateState(() {
+        isValid = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -290,6 +298,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextField(
+
         controller: _college,
         obscureText: false,
         keyboardType: TextInputType.text,
@@ -297,7 +306,8 @@ class _SignUpScreenState extends State<SignUpScreen>{
           fontSize: 14,
         ),
         decoration: InputDecoration(
-          labelText: "College",
+          enabled: false,
+          labelText: "Siliguri Institute of Technology",
           alignLabelWithHint: true,
           labelStyle: TextStyle(
             color: Colors.black,
@@ -343,26 +353,26 @@ class _SignUpScreenState extends State<SignUpScreen>{
   Widget sem(){
     return Material(
       borderRadius: BorderRadius.circular(22.0),
-      child: TextField(
-        controller: _sem,
-        obscureText: false,
-        keyboardType: TextInputType.text,
-        style: TextStyle(
-          fontSize: 14,
-        ),
-        decoration: InputDecoration(
-          labelText: "Semester",
-          alignLabelWithHint: true,
-          labelStyle: TextStyle(
-            color: Colors.black,
-          ),
-          fillColor: Color.fromRGBO(241, 243, 243, 1),
-          filled: true,
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(22.0)
-          ),
-        ),
-      ),
+     child:TextField(
+       controller: _sem,
+       obscureText: false,
+       keyboardType: TextInputType.number,
+       style: TextStyle(
+         fontSize: 14,
+       ),
+       decoration: InputDecoration(
+         labelText: "Sem",
+         alignLabelWithHint: true,
+         labelStyle: TextStyle(
+           color: Colors.black,
+         ),
+         fillColor: Color.fromRGBO(241, 243, 243, 1),
+         filled: true,
+         border: OutlineInputBorder(
+             borderRadius: BorderRadius.circular(22.0)
+         ),
+       ),
+     ),
     );
   }
 
@@ -372,10 +382,19 @@ class _SignUpScreenState extends State<SignUpScreen>{
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       color: Color.fromRGBO(255,188,114, 1),
       onPressed: () {
-        smsCodeDialog(context);
-        /*verifyphn();*/
         /*pr.show();*/
-        uploadPic(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      OTPScreen(
+                        mobileNumber:
+                        _phnNumber
+                            .text,
+                      ),
+                ));
+
+        /*uploadPic(context);*/
        /* Navigator.push(context,
           MaterialPageRoute(builder: (context) => Home()),);
       */},
@@ -394,79 +413,5 @@ class _SignUpScreenState extends State<SignUpScreen>{
     );
   }
 
-  Future<void> verifyphn() async {
-
-    final PhoneCodeAutoRetrievalTimeout autoRetrieve = (String verId){
-      this.VerifyId = verId;
-    };
-    final PhoneCodeSent smsCodesent = (String verId,[int forceCodeResend])async{
-      this.VerifyId = verId;
-    };
-    final PhoneVerificationCompleted verifiedSuccess = (AuthCredential user){
-      print("Done");
-      FirebaseAuth.instance.signInWithCredential(user).then((AuthResult value){
-        if(value.user != null){
-          print(value.user.phoneNumber);
-          Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Home()),);
-        }
-      });
-    };
-    final PhoneVerificationFailed verifiedFailed = (AuthException exception){
-      print('${exception.message}');
-      print("Failed");
-    };
-
-    await FirebaseAuth.instance.verifyPhoneNumber(phoneNumber: this.phoneNumber,
-        timeout: const Duration(seconds: 5),
-        verificationCompleted: verifiedSuccess,
-        verificationFailed: verifiedFailed,
-        codeSent: smsCodesent,
-        codeAutoRetrievalTimeout: autoRetrieve,
-    );
-  }
-
-  Future<bool> smsCodeDialog(BuildContext context){
-    return showDialog(
-      context: context,
-    barrierDismissible: false,
-    builder: (BuildContext context){
-      return new AlertDialog(
-        title: Text('Enter Otp here.'),
-        content: PinInputTextField(
-          pinLength: 6,
-          decoration: UnderlineDecoration(),
-          autoFocus: true,
-          textInputAction: TextInputAction.go,
-        ),
-        contentPadding: EdgeInsets.all(10.0),
-        actions: <Widget>[
-          new RaisedButton(
-            child: Text('Submit OTP'),
-            onPressed: (){
-              FirebaseAuth.instance.currentUser().then((user){
-                verifyphn();
-              });
-            },
-          ),
-        ],
-      );
-    },
-    );
-  }
-
-  signUp(BuildContext context){
-    final AuthCredential credential = PhoneAuthProvider.getCredential(
-        verificationId: VerifyId,
-        smsCode: smsCode,
-    );
-    FirebaseAuth.instance.signInWithCredential(credential).then((user){
-      Navigator.push(context,
-        MaterialPageRoute(builder: (context) => Home()),);
-    }).catchError((e){
-      print(e);
-      /*print('Auth Credential Error : $e');*/
-    });
-  }
 }
 
