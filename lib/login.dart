@@ -1,6 +1,8 @@
 import 'package:college_services/main.dart';
 import 'package:college_services/responsive.dart';
 import 'package:college_services/signup.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'Home.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -21,13 +23,17 @@ class LogInScreen extends StatefulWidget {
 
 class _LogInScreenState extends State<LogInScreen> {
 
+  String Email;
+  String Password;
+
+
   double _height;
   double _width;
   double _pixelRatio;
   bool _large;
   bool _medium;
-  TextEditingController _rollnumberController = new TextEditingController();
-  TextEditingController _phonenumberController = new TextEditingController();
+  TextEditingController _email = new TextEditingController();
+  TextEditingController _password = new TextEditingController();
   GlobalKey<FormState> _key = GlobalKey();
   FocusNode _focusNodePassword = FocusNode();
   bool _obsecure = false;
@@ -66,9 +72,9 @@ class _LogInScreenState extends State<LogInScreen> {
             children: <Widget>[
               new Image.asset('assets/images/example.png',height: 170, width: 170,),
               SizedBox(height: 40.0,),
-              rollinput("Roll Number",_rollnumberController, _obsecure),
+              email("Email",_email, false),
               SizedBox(height: 20.0,),
-              passwordinput("Phone Number",_phonenumberController, _obsecure),
+              password("Password",_password, true),
               SizedBox(height: 40.0,),
               buildLogInButton(),
               SizedBox(height: 10.0,),
@@ -80,42 +86,19 @@ class _LogInScreenState extends State<LogInScreen> {
     );
   }
 
-  Widget buildLogInButton(){
-    return RaisedButton(
-      shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
-      color: Color.fromRGBO(0,21,43,1),
-      onPressed: (){
-        pr.show();
-        Future.delayed(Duration(seconds: 10)).then((onValue){
-          print("PR status  ${pr.isShowing()}" );
-          if(pr.isShowing())
-            pr.hide();
-          print("PR status  ${pr.isShowing()}" );
-        });
-       /* Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Home()),);*/
-      },
-      textColor: Colors.white,
-      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-      child: Container(
-        alignment: Alignment.center,
-        width: _width/1.7,
-        child: Text(
-          "LogIn",
-          style: TextStyle(
-            fontSize: 18.0,
-          ),
-        ),
-      ),
-    );
-  }
-  Widget rollinput(String hint, TextEditingController controller,
-      bool obsecure) {
+  Widget email(String hint, TextEditingController controller, bool obsecure) {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20),
       width: _width/1.3,
-      child: TextField(
-          keyboardType: TextInputType.number,
+      child: TextFormField(
+          validator: (val) => !EmailValidator.validate(val, true)
+              ? 'Not a valid email.'
+              : null,
+          onSaved: (value){
+            this.Email = value;
+            print(this.Email);
+          },
+          keyboardType: TextInputType.emailAddress,
           controller: controller,
           obscureText: obsecure,
           style: TextStyle(
@@ -141,14 +124,18 @@ class _LogInScreenState extends State<LogInScreen> {
     );
   }
 
-  Widget passwordinput(String hint, TextEditingController controller,
-      bool obsecure) {
+  Widget password(String hint, TextEditingController controller, bool obsecure) {
     return Container(
       width: _width/1.3,
       padding: EdgeInsets.only(left: 20, right: 20),
-      child: TextField(
+      child: TextFormField(
+          validator: validatepassword,
+          onSaved: (value){
+            this.Password = value;
+            print(this.Password);
+          },
           focusNode: _focusNodePassword,
-          keyboardType: TextInputType.number,
+          keyboardType: TextInputType.text,
           controller: controller,
           obscureText: obsecure,
           style: TextStyle(
@@ -172,6 +159,35 @@ class _LogInScreenState extends State<LogInScreen> {
       ),
     );
   }
+
+  Widget buildLogInButton(){
+    return RaisedButton(
+      shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
+      color: Color.fromRGBO(0,21,43,1),
+      onPressed: (){
+        pr.show();
+        Future.delayed(Duration(seconds: 4)).then((onValue){
+            pr.hide();
+            login();
+
+        });
+        
+      },
+      textColor: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+      child: Container(
+        alignment: Alignment.center,
+        width: _width/1.7,
+        child: Text(
+          "LogIn",
+          style: TextStyle(
+            fontSize: 18.0,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget signUpTextRow() {
     return Container(
       margin: EdgeInsets.only(top: _height / 120.0),
@@ -198,6 +214,30 @@ class _LogInScreenState extends State<LogInScreen> {
         ],
       ),
     );
+  }
+
+  String validatepassword(String value) {
+    if(value.length < 8 ){
+      return 'Password must be longer than 8 digit';
+    }
+    else
+      return null;
+  }
+
+  void login() async {
+    if(_key.currentState.validate()){
+      _key.currentState.save();
+      try{
+       final  FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: Email, password: Password);
+        assert(user != null);
+        assert(await user.getIdToken() != null);
+        final FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
+        assert(user.uid == currentUser.uid);
+        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
+      }catch(e){
+        print(e.message);
+      }
+    }
   }
 }
 

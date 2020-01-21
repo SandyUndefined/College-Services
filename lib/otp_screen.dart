@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import './otp_input.dart';
+import 'signup.dart';
 import 'Home.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -42,58 +43,16 @@ class _OTPScreenState extends State<OTPScreen> {
   Widget build(BuildContext context) {
     _width = MediaQuery.of(context).size.width;
     print("isValid - $isCodeSent");
-    print("mobiel ${widget.mobileNumber}");
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        elevation: 0.0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-          ),
-          color: Colors.black,
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        bottom: PreferredSize(
-          child: Container(
-            padding: EdgeInsets.only(left: 16.0, bottom: 16, top: 5),
-            color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.center,
-                    child: Text(
-                      "Enter OTP",
-                      textAlign: TextAlign.center,
-                      style:
-                      TextStyle(
-                          fontSize: 22.0, fontWeight: FontWeight.bold),
-                    ),
-                    ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                    child: Text(
-                      "OTP has been sent to your mobile ${widget.mobileNumber}",
-                      style: TextStyle(
-                          fontSize: 14.0, fontWeight: FontWeight.normal),
-                    ),
-                    ),
+    print("mobile ${widget.mobileNumber}");
+    return Material(
+         child:Container(
+            padding: EdgeInsets.only(left: 16.0, bottom: 16, top: 55),
 
-                  ],
-                ),
-          ),
-          preferredSize: Size.fromHeight(75),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
+           child: SingleChildScrollView(
+          child: Column(
+             children: <Widget>[
+               text(),
+             subtext(),
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: PinInputTextField(
@@ -141,6 +100,7 @@ class _OTPScreenState extends State<OTPScreen> {
           ],
         ),
       ),
+         ),
     );
   }
 
@@ -241,5 +201,32 @@ class _OTPScreenState extends State<OTPScreen> {
     }).catchError((error) {
       showToast("Something went wrong", Colors.red);
     });
+  }
+
+  Widget text() {
+    return Container(
+      padding: EdgeInsets.only(bottom: 15, top: 25),
+      child: Text(
+             "Enter OTP",
+             textAlign: TextAlign.center,
+             style:
+             TextStyle(
+                 fontSize: 22.0, fontWeight: FontWeight.bold),
+           ),
+    );
+
+
+  }
+  Widget subtext(){
+    return Container(
+      padding: EdgeInsets.only(bottom: 25, top: 10),
+      child: Text(
+        "OTP has been sent to your mobile ${widget.mobileNumber}",
+        textAlign: TextAlign.center,
+        style:
+        TextStyle(
+            fontSize: 15.0, fontWeight: FontWeight.normal),
+      ),
+    );
   }
 }
