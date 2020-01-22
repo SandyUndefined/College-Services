@@ -1,4 +1,3 @@
-import 'package:college_services/main.dart';
 import 'package:college_services/responsive.dart';
 import 'package:college_services/signup.dart';
 import 'package:email_validator/email_validator.dart';
@@ -23,8 +22,8 @@ class LogInScreen extends StatefulWidget {
 
 class _LogInScreenState extends State<LogInScreen> {
 
-  String Email;
-  String Password;
+  String _email;
+  String _password;
 
 
   double _height;
@@ -32,11 +31,14 @@ class _LogInScreenState extends State<LogInScreen> {
   double _pixelRatio;
   bool _large;
   bool _medium;
-  TextEditingController _email = new TextEditingController();
-  TextEditingController _password = new TextEditingController();
+  TextEditingController _Email = new TextEditingController();
+  TextEditingController _Password = new TextEditingController();
+
   GlobalKey<FormState> _key = GlobalKey();
+
   FocusNode _focusNodePassword = FocusNode();
-  bool _obsecure = false;
+
+
   ProgressDialog pr;
 
 
@@ -62,8 +64,8 @@ class _LogInScreenState extends State<LogInScreen> {
       messageTextStyle: TextStyle(
           color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.w600),
     );
-    return Material (
-      child: Container (
+    return Scaffold (
+      body: Container (
         height: _height,
         width: _width,
         padding: EdgeInsets.only(top: 80.0, bottom: 20.0),
@@ -72,9 +74,7 @@ class _LogInScreenState extends State<LogInScreen> {
             children: <Widget>[
               new Image.asset('assets/images/example.png',height: 170, width: 170,),
               SizedBox(height: 40.0,),
-              email("Email",_email, false),
-              SizedBox(height: 20.0,),
-              password("Password",_password, true),
+              form(),
               SizedBox(height: 40.0,),
               buildLogInButton(),
               SizedBox(height: 10.0,),
@@ -86,18 +86,32 @@ class _LogInScreenState extends State<LogInScreen> {
     );
   }
 
-  Widget email(String hint, TextEditingController controller, bool obsecure) {
+  Widget form(){
+    return Container(
+      /*padding: EdgeInsets.only(
+          left: _width / 6.0,
+          right: _width / 6.0),*/
+      child: Form(
+        key: _key,
+        child: Column(
+          children: <Widget>[
+            email("Email",_Email,false),
+            SizedBox(height: 20.0,),
+            password("Password",_Password,true),
+            /*SizedBox(height: 40.0),
+          buildSignUpButton(),
+          SizedBox(height: 20.0),*/
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget email(String hint,TextEditingController controller, bool obsecure) {
     return Container(
       padding: EdgeInsets.only(left: 20, right: 20),
       width: _width/1.3,
       child: TextFormField(
-          validator: (val) => !EmailValidator.validate(val, true)
-              ? 'Not a valid email.'
-              : null,
-          onSaved: (value){
-            this.Email = value;
-            print(this.Email);
-          },
           keyboardType: TextInputType.emailAddress,
           controller: controller,
           obscureText: obsecure,
@@ -119,21 +133,24 @@ class _LogInScreenState extends State<LogInScreen> {
           onEditingComplete: () {
             /*_focusNodePassword.requestFocus();*/
             FocusScope.of(context).requestFocus(_focusNodePassword);
-          }
-      ),
+          },
+          validator: (value) => !EmailValidator.validate(value, true)
+              ? 'Not a valid email.'
+              : null,
+          onChanged: (value){
+          setState(() {
+          _email = value;
+             });
+          }),
     );
   }
 
-  Widget password(String hint, TextEditingController controller, bool obsecure) {
+  Widget password(String hint,TextEditingController controller, bool obsecure) {
     return Container(
       width: _width/1.3,
       padding: EdgeInsets.only(left: 20, right: 20),
       child: TextFormField(
           validator: validatepassword,
-          onSaved: (value){
-            this.Password = value;
-            print(this.Password);
-          },
           focusNode: _focusNodePassword,
           keyboardType: TextInputType.text,
           controller: controller,
@@ -155,7 +172,12 @@ class _LogInScreenState extends State<LogInScreen> {
           ),
           onEditingComplete: () {
             FocusScope.of(context).requestFocus(new FocusNode());
-          }
+          },
+          onChanged: (value){
+         setState(() {
+        _password = value;
+        });
+        },
       ),
     );
   }
@@ -165,13 +187,20 @@ class _LogInScreenState extends State<LogInScreen> {
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       color: Color.fromRGBO(0,21,43,1),
       onPressed: (){
+        if(_key.currentState.validate()){
         pr.show();
-        Future.delayed(Duration(seconds: 4)).then((onValue){
-            pr.hide();
-            login();
-
-        });
-        
+        Future.delayed (Duration(seconds: 2), ).then((onValue){
+          if(pr.isShowing())
+            {
+              login();
+              Future.delayed(Duration(seconds: 3),).then((onValue){
+                pr.hide();
+              });
+            }
+        }
+        );
+        _key.currentState.save();
+        }
       },
       textColor: Colors.white,
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
@@ -217,27 +246,35 @@ class _LogInScreenState extends State<LogInScreen> {
   }
 
   String validatepassword(String value) {
-    if(value.length < 8 ){
-      return 'Password must be longer than 8 digit';
+    if(value.length < 6 ){
+      return 'Password must be longer than 6 digit';
     }
     else
       return null;
   }
 
   void login() async {
-    if(_key.currentState.validate()){
-      _key.currentState.save();
-      try{
-       final  FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: Email, password: Password);
-        assert(user != null);
-        assert(await user.getIdToken() != null);
-        final FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-        assert(user.uid == currentUser.uid);
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(user: user)));
-      }catch(e){
-        print(e.message);
-      }
-    }
+     if(_key.currentState.validate()){
+       FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password)
+       .then((user){
+         Navigator.of(context).pop();
+         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+
+       }).catchError((error){
+         final snackBar = SnackBar(
+           content: Text('Something went wrong.'),
+           action: SnackBarAction(
+             label: 'Retry',
+             onPressed: () {
+               _Email.clear();
+               _Password.clear();
+               },
+           ),
+         );
+         Scaffold.of(context).showSnackBar(snackBar);
+         print('sandeep${error}');
+       });
+     }
   }
 }
 

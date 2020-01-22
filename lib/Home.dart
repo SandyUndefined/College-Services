@@ -3,12 +3,8 @@ import 'package:flutter/material.dart';
 import 'login.dart';
 
 class HomePage extends StatelessWidget {
-  final FirebaseUser user;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  HomePage({Key key, @required this.user})
-      : assert(user != null),
-        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +19,6 @@ class HomePage extends StatelessWidget {
               Navigator.push(
                   context, MaterialPageRoute(builder: (context) => LogIn()));
             },
-          ),
-          Center(
-            child: Text(user.phoneNumber),
           ),
         ],
       ),

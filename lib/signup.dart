@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:college_services/SignUpComplete.dart';
 import 'package:college_services/login.dart';
+import 'package:college_services/services/usermanagement.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -74,22 +74,9 @@ class _SignUpScreenState extends State<SignUpScreen>{
   FocusNode _focusconfpsswd = FocusNode();
   FocusNode _focusemail = FocusNode();
 
-  bool _obsecure = false;
   bool ImageDone = false;
 
   ProgressDialog pr;
-  String basename;
-
-  bool isValid = false;
-
-  /*Future<Null> validate(StateSetter updateState) async {
-    print("in validate : ${_phnNumber.text.length}");
-    if (_phnNumber.text.length == 10) {
-      updateState(() {
-        isValid = true;
-      });
-    }
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -255,10 +242,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
         onEditingComplete: (){
          FocusScope.of(context).requestFocus(_focusphn);
         },
-        onSaved: (value){
-          this.Name = value;
-          print(this.Name);
-        },
         controller: _name,
         obscureText: false,
         keyboardType: TextInputType.text,
@@ -278,6 +261,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
           ),
         ),
         validator: validateName,
+        onChanged: (value){
+          setState(() {
+            Name = value;
+            print(Name);
+          });
+        },
       ),
     );
   }
@@ -291,10 +280,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
           FocusScope.of(context).requestFocus(_focusemail);
         },
         validator: validatephone,
-        onSaved: (value){
-          this.phoneNumber = value;
-          print(this.phoneNumber);
-        },
         controller: _phnNumber,
         obscureText: false,
         keyboardType: TextInputType.number,
@@ -313,6 +298,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
               borderRadius: BorderRadius.circular(22.0)
           ),
         ),
+        onChanged: (value){
+          setState(() {
+            phoneNumber = value;
+            print(phoneNumber);
+          });
+        },
       ),
     );
   }
@@ -328,10 +319,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
         validator: (val) => !EmailValidator.validate(val, true)
             ? 'Not a valid email.'
             : null,
-        onSaved: (value){
-          this.Email = value;
-          print(this.Email);
-        },
         controller: _email,
         obscureText: false,
         keyboardType: TextInputType.emailAddress,
@@ -350,6 +337,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
               borderRadius: BorderRadius.circular(22.0)
           ),
         ),
+        onChanged: (value){
+          setState(() {
+            Email = value;
+            print(Email);
+          });
+        },
       ),
     );
   }
@@ -363,10 +356,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
           FocusScope.of(context).requestFocus(_focusconfpsswd);
         },
         validator: validatepassword,
-        onSaved: (value){
-          this.Password = value;
-          print(this.Password);
-        },
         controller: _password,
         obscureText: true,
         keyboardType: TextInputType.text,
@@ -385,6 +374,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
               borderRadius: BorderRadius.circular(22.0)
           ),
         ),
+        onChanged: (value){
+          setState(() {
+            Password = value;
+            print(Password);
+          });
+        },
       ),
     );
 
@@ -399,10 +394,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
           FocusScope.of(context).requestFocus(_focusroll);
         },
         validator: validateconfpsswd,
-        onSaved: (value){
-          this.ConfirmPassword = value;
-          print(this.ConfirmPassword);
-        },
         controller: _confirmpassword,
         obscureText: true,
         keyboardType: TextInputType.text,
@@ -421,6 +412,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
               borderRadius: BorderRadius.circular(22.0)
           ),
         ),
+        onChanged: (value){
+          setState(() {
+            ConfirmPassword = value;
+            print(ConfirmPassword);
+          });
+        },
       ),
     );
 
@@ -433,10 +430,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
         focusNode: _focusroll,
         onEditingComplete: (){
           FocusScope.of(context).requestFocus(_focuscourse);
-        },
-        onSaved: (value){
-          this.RollNumber = value;
-          print(this.RollNumber);
         },
         validator: validateroll,
         controller: _rollNumber,
@@ -457,6 +450,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
               borderRadius: BorderRadius.circular(22.0)
           ),
         ),
+        onChanged: (value){
+          setState(() {
+            RollNumber = value;
+            print(RollNumber);
+          });
+        },
       ),
     );
   }
@@ -496,10 +495,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
-        onSaved: (value){
-          this.Course = value;
-          print(this.Course);
-        },
         focusNode: _focuscourse,
         onEditingComplete: (){
           FocusScope.of(context).requestFocus(_focussem);
@@ -523,6 +518,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
               borderRadius: BorderRadius.circular(22.0)
           ),
         ),
+        onChanged: (value){
+          setState(() {
+            Course = value;
+            print(Course);
+          });
+        },
       ),
     );
   }
@@ -532,10 +533,6 @@ class _SignUpScreenState extends State<SignUpScreen>{
       borderRadius: BorderRadius.circular(22.0),
      child:TextFormField(
        focusNode: _focussem,
-       onSaved: (value){
-         this.Semester = value;
-         print(this.Semester);
-       },
        onEditingComplete: (){
          FocusScope.of(context).requestFocus(new FocusNode());
        },
@@ -558,6 +555,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
              borderRadius: BorderRadius.circular(22.0)
          ),
        ),
+       onChanged: (value){
+         setState(() {
+           Semester = value;
+           print(Semester);
+         });
+       },
      ),
     );
   }
@@ -570,19 +573,17 @@ class _SignUpScreenState extends State<SignUpScreen>{
         if (_key.currentState.validate() && ImageDone == true) {
           print('ho gya ');
           pr.show();
-          Future.delayed(Duration(seconds: 5)).then((value){
-            Signup();
-            uploadPic(context);
-            createRecord();
-            pr.hide();
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      SignUpCompletePage(),
-                ));
-          });
-
+          Signup();
+          Future.delayed (Duration(seconds: 3), ).then((onValue){
+            if(pr.isShowing())
+            {
+              uploadPic(context);
+              Future.delayed(Duration(seconds: 3),).then((onValue){
+                pr.hide();
+              });
+            }
+          }
+          );
           _key.currentState.save();
         }
         else
@@ -638,22 +639,14 @@ class _SignUpScreenState extends State<SignUpScreen>{
     );
   }
 
-  void createRecord() {
-    databaseReference.child(phoneNumber).set({
-      'Name' : Name,
-      'Password' : Password,
-      'Phone Number' : phoneNumber,
-      'Roll Number' : RollNumber,
-      'College' : 'Siliguri Institute of Technology',
-      'Semester' : Semester
-    });
-  }
-
   String validateName(String value) {
-    if (value.isEmpty) {
-      return 'Please enter a name';
+    if (value.isNotEmpty) {
+      return null;
     }
-    return null;
+    else
+      {
+        return 'Please enter a name';
+      }
   }
 
   String validatephone(String value) {
@@ -690,31 +683,34 @@ class _SignUpScreenState extends State<SignUpScreen>{
   }
 
   String validatepassword(String value) {
-    if(value.length < 8 ){
-      return 'Password must be longer than 8 digit';
+    if(value.length < 6 ){
+      return 'Password must be longer than 6 digit';
     }
     else
       return null;
   }
 
   String validateconfpsswd(String value) {
-    if(Password == ConfirmPassword)
+    if(value != _password.text)
     {
-      return null;
-    }
-    else
       return 'Password does not match';
 
+    }
+    else
+      return null;
   }
 
   void Signup() async{
     if(_key.currentState.validate()){
-      _key.currentState.save();
-      try{
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(email: Email, password: Password);
-      }catch(e){
-        print(e.message);
-      }
+      FirebaseAuth.instance.createUserWithEmailAndPassword(email: Email, password: Password).then((signedInUser){
+        UserManagement().storeNewUser(Name,Email,Password,phoneNumber,RollNumber,Course,Semester,signedInUser.user, context);
+      }).catchError((e){
+        final snackBar = SnackBar(
+          content: Text('Something went wrong. Try again'),
+        );
+        Scaffold.of(context).showSnackBar(snackBar);
+        print(e);
+      });
     }
   }
 
