@@ -1,4 +1,4 @@
-import 'package:college_services/responsive.dart';
+import 'package:college_services/services/responsive.dart';
 import 'package:college_services/signup.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -257,6 +257,8 @@ class _LogInScreenState extends State<LogInScreen> {
      if(_key.currentState.validate()){
        FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password)
        .then((user){
+         Navigator.of(context).pop();
+         Navigator.of(context).pop();
          Navigator.of(context).pop();
          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
 
