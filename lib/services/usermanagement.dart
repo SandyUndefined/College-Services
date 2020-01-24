@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class UserManagement {
-
+ /* final String uid;
+  UserManagement({ this.uid });*/
   storeNewUser(Name,Email,password,phonenumber,rollnumber,course,sem,user,context){
     Firestore.instance.collection('/users').document(user.uid).setData({
       'Name' : Name,
@@ -20,12 +21,11 @@ class UserManagement {
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => SignUpCompletePage()));
     }).catchError((e){
       final snackBar = SnackBar(
-        content: Text('Something went wrong. Try again'),
+        content: Text(e.message),
       );
       Scaffold.of(context).showSnackBar(snackBar);
-      print('sandeep${e}');
-      print(e);
     });
   }
+
 
 }
