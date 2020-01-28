@@ -1,5 +1,6 @@
 import 'package:circle_bottom_navigation/circle_bottom_navigation.dart';
 import 'package:circle_bottom_navigation/widgets/tab_data.dart';
+import 'package:college_services/SideBar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -19,7 +20,7 @@ class _HomePageState extends State<HomePage>{
     Home(),
     Messages(),
     Notify(),
-    Profile(),
+    SideBar(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -30,11 +31,6 @@ class _HomePageState extends State<HomePage>{
           children: <Widget>[
             createHeader(),
             createDrawerItem(
-              icon:Icons.home,
-              text:'Home',
-              onTap: () => home(),
-            ),
-            createDrawerItem(
                 icon:Icons.person,
                 text:'Profile',
                 onTap: () =>
@@ -44,11 +40,6 @@ class _HomePageState extends State<HomePage>{
                 icon:Icons.people,
                 text:'Friends',
                 onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),),
-            ),
-            createDrawerItem(
-                icon:Icons.message,
-                text:'Messages',
-                onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Messages()),),
             ),
             Divider(),
             createDrawerItem(
@@ -121,8 +112,8 @@ class _HomePageState extends State<HomePage>{
             fontSize: 12,
             fontWeight: FontWeight.bold,),
           TabData(
-            title: 'Profile',
-            icon: Icons.person,
+            title: 'More',
+            icon: Icons.menu,
             iconSize: 25,
             fontSize: 12,
             fontWeight: FontWeight.bold,
@@ -178,10 +169,6 @@ class _HomePageState extends State<HomePage>{
     _firebaseAuth.signOut();
     Navigator.of(context).pop();
     Navigator.push(context, MaterialPageRoute(builder: (context) => new LogIn()));
-  }
-  void home() {
-    Navigator.of(context).pop();
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Home()),);
   }
 }
 

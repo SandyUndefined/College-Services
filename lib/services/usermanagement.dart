@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:college_services/SignUpComplete.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -26,6 +27,14 @@ class UserManagement {
       Scaffold.of(context).showSnackBar(snackBar);
     });
   }
+
+  getData() async{
+    String userId = (await FirebaseAuth.instance.currentUser()).uid;
+    print(userId);
+    return Firestore.instance.collection('users').document(userId).get();
+
+  }
+
 
 
 }

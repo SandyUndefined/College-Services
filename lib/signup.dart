@@ -706,7 +706,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
         UserManagement().storeNewUser(Name,Email,Password,phoneNumber,RollNumber,Course,Semester,signedInUser.user, context);
       }).catchError((e){
         final snackBar = SnackBar(
-          content: Text('Something went wrong. Try again'),
+          content: Text(e.message),
         );
         Scaffold.of(context).showSnackBar(snackBar);
         print(e);
