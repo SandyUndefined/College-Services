@@ -32,7 +32,11 @@ class UserManagement {
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     print(userId);
     return Firestore.instance.collection('users').document(userId).get();
+  }
 
+  getCurrentUser()async{
+    String userId = (await FirebaseAuth.instance.currentUser()).uid;
+    return userId;
   }
 
 

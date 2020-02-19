@@ -20,7 +20,7 @@ class _SideBarState extends State<SideBar> {
     _width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container (
-          height: _height/1.2,
+          height: _height/0.8,
           width: _width,
           child: SingleChildScrollView(
             child: Column(
@@ -38,7 +38,7 @@ class _SideBarState extends State<SideBar> {
   Widget header(){
     return Container(
       width: _width,
-      height: 150,
+      height: 100,
       color: Color.fromRGBO(0,21,43,1),
       child: CircleAvatar(
         child: Text(

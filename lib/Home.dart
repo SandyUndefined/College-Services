@@ -1,6 +1,7 @@
 import 'package:circle_bottom_navigation/circle_bottom_navigation.dart';
 import 'package:circle_bottom_navigation/widgets/tab_data.dart';
 import 'package:college_services/SideBar.dart';
+import 'package:college_services/pages/upload.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -67,7 +68,8 @@ class _HomePageState extends State<HomePage>{
                 icon:Icons.settings,
                 text:'Settings',
                 onTap: () =>
-                Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),)),
+                Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),)
+            ),
             createDrawerItem(
                 icon:Icons.arrow_forward,
                 text:'Logout',
@@ -80,7 +82,9 @@ class _HomePageState extends State<HomePage>{
       floatingActionButton: FloatingActionButton(
         backgroundColor:Color.fromRGBO(255,188,114, 1),
         child: Icon(Icons.add_box),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,MaterialPageRoute(builder: (context) => Upload()),);
+        },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: CircleBottomNavigation(
