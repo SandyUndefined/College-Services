@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:multi_image_picker/multi_image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 class Upload extends StatefulWidget {
   @override
@@ -14,8 +15,17 @@ class Upload extends StatefulWidget {
 
 class _UploadState extends State<Upload> {
 
-  List<Asset> images = List<Asset>();
+  GlobalKey<FormState> _key = GlobalKey();
+  TextEditingController _desController = new TextEditingController();
 
+  FocusNode myFocus = FocusNode();
+  String Des;
+  String _fileName;
+  String _path;
+  Map<String, String> _paths;
+  String _extension;
+  bool _loadingPath = false;
+  bool _multipick = true;
   double _height;
   double _width;
   bool userFlag = false;
@@ -23,6 +33,7 @@ class _UploadState extends State<Upload> {
   Uint8List image;
   StorageReference imageRef = FirebaseStorage.instance.ref().child("User Profile Photo");
   String userId,Name,PhoneNumber;
+  ProgressDialog pr;
 
   Future getImage(context) async{
     int maxSize = 10*1024*1024;
@@ -38,47 +49,15 @@ class _UploadState extends State<Upload> {
     print(filename);
   }
 
-  Future<void> choosefiles() async {
-    List<Asset> resultList = List<Asset>();
-    String error = 'No Error Dectected';
-
-    try {
-      resultList = await MultiImagePicker.pickImages(
-        maxImages: 30,
-        enableCamera: true,
-        selectedAssets: images,
-        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
-        materialOptions: MaterialOptions(
-          actionBarColor: "#ffbc72",
-          lightStatusBar: true,
-          statusBarColor: '#ffbc72',
-          actionBarTitle: "Select Images",
-          actionBarTitleColor: "#000",
-          allViewTitle: "All Photos",
-          useDetailsView: false,
-          selectCircleStrokeColor: "#fff",
-          selectionLimitReachedText: "only 30 images applicable"
-        ),
-      );
-    } on Exception catch (e) {
-      error = e.toString();
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      images = resultList;
-    });
+  @override
+  void dispose() {
+    // other dispose methods
+    _desController.dispose();
+    super.dispose();
   }
-
-  upload(fileName, filePath) {}
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     UserManagement().getData().then((results) {
       setState(() {
@@ -92,12 +71,51 @@ class _UploadState extends State<Upload> {
     });
   }
 
+  void _chooseFiles() async{
+    try {
+      if (_multipick) {
+        print('Saab');
+        _path = null;
+        _paths = await FilePicker.getMultiFilePath(
+            type: FileType.ANY, fileExtension: _extension);
+      } else {
+        print('akela');
+        _paths = null;
+        _path = await FilePicker.getFilePath(
+            type: FileType.ANY, fileExtension: _extension);
+      }
+    }catch (e) {
+      print("Unsupported operation" + e.toString());
+    }
+    if (!mounted) return;
+    setState(() {
+      _loadingPath = false;
+      _fileName = _path != null
+          ? _path.split('/').last
+          : _paths != null ? _paths.keys.toString() : '...';
+    });
+
+  }
+
 
 
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
+    pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr.style(
+      message: 'Please wait...',
+      borderRadius: 10.0,
+      backgroundColor: Colors.white,
+      progressWidget: CircularProgressIndicator(),
+      elevation: 10.0,
+      insetAnimCurve: Curves.easeInOut,
+      progressTextStyle: TextStyle(
+          color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+      messageTextStyle: TextStyle(
+          color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.w600),
+    );
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Post'),
@@ -112,11 +130,50 @@ class _UploadState extends State<Upload> {
             SizedBox(height: 30,),
             ChooseFiles(),
             SizedBox(height: 50,),
+            new Builder(
+              builder: (BuildContext context) => _loadingPath
+                  ? Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: const CircularProgressIndicator())
+                  : _path != null || _paths != null
+                  ? new Container(
+                padding: const EdgeInsets.only(bottom: 30.0),
+                height: MediaQuery.of(context).size.height * 0.50,
+                child: new Scrollbar(
+                    child: new ListView.separated(
+                      itemCount: _paths != null && _paths.isNotEmpty
+                          ? _paths.length
+                          : 1,
+                      itemBuilder: (BuildContext context, int index ) {
+                        final bool isMultiPath =
+                            _paths != null && _paths.isNotEmpty;
+                        final String name = 'File $index : ' +
+                            (isMultiPath
+                                ? _paths.keys.toList()[index]
+                                : _fileName ?? '...');
+                        final path = isMultiPath
+                            ? _paths.values.toList()[index].toString()
+                            : _path;
+
+                        return new ListTile(
+                          title: new Text(
+                            name,
+                          ),
+                          subtitle: new Text(path),
+                        );
+                        },
+                      separatorBuilder:
+                          (BuildContext context, int index) =>
+                      new Divider(),
+                    )),
+              )
+                  : new Container(),
+            ),
             SizedBox(height: 30,),
             postButton(),
-            SizedBox(height: 30,)
+            SizedBox(height: 30,),
 
-          ],
+          ]
         ),
         ),
       ),
@@ -153,14 +210,15 @@ class _UploadState extends State<Upload> {
       ],
     );
   }
+
   Widget desBox(){
     return Container(
       padding: EdgeInsets.only(left: 28,right: 28,),
-      child:TextFormField(
-      /*validator: validatedes,*/
+      child:TextField(
+        controller: _desController,
       keyboardType: TextInputType.multiline,
+        textInputAction: TextInputAction.done,
       maxLines: 6,
-      /*controller: controller,*/
       obscureText: false,
       style: TextStyle(
         fontSize: 16,
@@ -177,11 +235,12 @@ class _UploadState extends State<Upload> {
           borderRadius: new BorderRadius.circular(5.0),
         ),
       ),
-      onEditingComplete: () {
-        FocusScope.of(context).requestFocus(new FocusNode());
-      },
-      onChanged: (value){
-      },
+        onChanged: (value){
+            setState(() {
+              Des = value;
+              print(Des);
+            });
+        },
       ),
     );
   }
@@ -189,14 +248,14 @@ class _UploadState extends State<Upload> {
     return RaisedButton(
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(5.0),),
       color: Color.fromRGBO(241, 243, 243, 1),
-      onPressed: choosefiles,
+      onPressed: () => _chooseFiles(),
       textColor: Colors.black45,
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
       child: Container(
         alignment: Alignment.center,
         width: _width/2.2,
         child: Text(
-          "Choose files",
+          "Select Files to Upload",
           style: TextStyle(
             fontSize: 16.0,
           ),
@@ -208,7 +267,28 @@ class _UploadState extends State<Upload> {
     return RaisedButton(
       shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
       color: Color.fromRGBO(0,21,43,1),
-      onPressed: (){},
+      onPressed:  () {
+        if (Des != null) {
+          print('ho gya ');
+          pr.show();
+          UploadPost();
+          Future.delayed (Duration(seconds: 3), ).then((onValue){
+            if(pr.isShowing() && _path == null || _paths == null && Des!=null)
+            {
+              print('Pic uploading');
+              uploadPic(context);
+              Future.delayed(Duration(seconds: 3),).then((onValue){
+                pr.hide();
+              });
+            }
+          }
+          );
+        }
+        else
+        {
+          print('Nahi hua....pic is not uploading');
+        }
+      },
       textColor: Colors.white,
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
       child: Container(
@@ -224,20 +304,13 @@ class _UploadState extends State<Upload> {
     );
   }
 
-  Widget buildGridView() {
-    return GridView.count(
-      crossAxisCount: 3,
-      children: List.generate(images.length, (index) {
-        Asset asset = images[index];
-        return AssetThumb(
-          asset: asset,
-          width: 300,
-          height: 300,
-        );
-      }),
-    );
+
+  void UploadPost() async{
+   UserManagement().addPost(Name,Des, PhoneNumber,_fileName, context);
   }
 
+  Future uploadPic(context) async {
 
+  }
 
 }

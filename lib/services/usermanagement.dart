@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:college_services/Home.dart';
 import 'package:college_services/SignUpComplete.dart';
+import 'package:college_services/pages/Homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -37,6 +39,25 @@ class UserManagement {
   getCurrentUser()async{
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     return userId;
+  }
+
+  addPost(Name,Des,PhoneNumber,_paths,context){
+    int timestamp;
+    var date = new DateTime.now();
+    Firestore.instance.collection('/Posts').document('$Name : $date',).setData({
+      'Name': Name,
+      'Description': Des,
+      'Image Url': _paths,
+      'PhoneNumber': PhoneNumber
+    }).then((value){
+      Navigator.of(context).pop();
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+    }).catchError((e){
+      final snackBar = SnackBar(
+        content: Text(e.message),
+      );
+      Scaffold.of(context).showSnackBar(snackBar);
+    });
   }
 
 

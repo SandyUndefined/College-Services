@@ -1,5 +1,7 @@
 import 'package:college_services/Home.dart';
+import 'package:college_services/login.dart';
 import 'package:college_services/pages/profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +11,7 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBarState extends State<SideBar> {
-
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   double _height;
   double _width;
 
@@ -265,9 +267,13 @@ class _SideBarState extends State<SideBar> {
         ),
       ],
       ),
-      onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => new HomePage()));
-      },
+      onTap: () => Logout(),
     );
+  }
+
+  void Logout() async{
+    _firebaseAuth.signOut();
+    Navigator.of(context).pop();
+    Navigator.push(context, MaterialPageRoute(builder: (context) => new LogIn()));
   }
 }

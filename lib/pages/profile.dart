@@ -35,7 +35,6 @@ Future getImage(context) async{
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     UserManagement().getData().then((results) {
     setState(() {

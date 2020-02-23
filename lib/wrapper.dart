@@ -22,7 +22,6 @@ class _WrapperState extends State<Wrapper> {
   AuthStatus authStatus = AuthStatus.notDetermined;
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
     final BaseAuth auth = AuthProvider.of(context).auth;
     auth.currentUser().then((String userId){
