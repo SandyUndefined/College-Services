@@ -41,13 +41,11 @@ class UserManagement {
     return userId;
   }
 
-  addPost(Name,Des,PhoneNumber,_paths,context){
-    int timestamp;
+  addPost(Name,Des,PhoneNumber,context){
     var date = new DateTime.now();
     Firestore.instance.collection('/Posts').document('$Name : $date',).setData({
       'Name': Name,
       'Description': Des,
-      'Image Url': _paths,
       'PhoneNumber': PhoneNumber
     }).then((value){
       Navigator.of(context).pop();

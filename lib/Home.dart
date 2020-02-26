@@ -26,58 +26,6 @@ class _HomePageState extends State<HomePage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            createHeader(),
-            createDrawerItem(
-                icon:Icons.person,
-                text:'Profile',
-                onTap: () =>
-                    Navigator.push(context,MaterialPageRoute(builder: (context) => Profile()),)
-            ),
-            createDrawerItem(
-                icon:Icons.people,
-                text:'Friends',
-                onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),),
-            ),
-            Divider(),
-            createDrawerItem(
-                icon:Icons.description,
-                text:'Notice',
-                onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),),
-            ),
-            createDrawerItem(
-                icon:Icons.event_note,
-                text:'Exam Schedule',
-                onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),),
-            ),
-            createDrawerItem(
-                icon:Icons.library_books,
-                text:'Pervious Year Question',
-                onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),),
-            ),
-            createDrawerItem(
-                icon:Icons.event,
-                text:'Events',
-                onTap: () => Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),),
-            ),
-            Divider(),
-            createDrawerItem(
-                icon:Icons.settings,
-                text:'Settings',
-                onTap: () =>
-                Navigator.push(context,MaterialPageRoute(builder: (context) => Home()),)
-            ),
-            createDrawerItem(
-                icon:Icons.arrow_forward,
-                text:'Logout',
-                onTap: () => logout(),
-            ),
-          ],
-        ),
-      ),
       body: screens[currentTab],
       floatingActionButton: FloatingActionButton(
         backgroundColor:Color.fromRGBO(255,188,114, 1),
@@ -126,53 +74,6 @@ class _HomePageState extends State<HomePage>{
         onTabChangedListener: (index) => setState(() => currentTab = index),
       ),
     );
-  }
-
-  Widget createHeader() {
-    return DrawerHeader(
-      margin: EdgeInsets.zero,
-      padding: EdgeInsets.zero,
-      child: CircleAvatar(
-          backgroundColor: Color.fromRGBO(0,21,43,1),
-          child: Text(
-            "A",
-            style: TextStyle(fontSize: 40.0),
-          ),
-        ),
-      decoration: BoxDecoration(
-          color: Colors.blue,
-          image: DecorationImage(
-              image: AssetImage("assets/images/2.jpg"),
-              fit: BoxFit.cover)
-      ),
-     /* decoration: BoxDecoration(
-          image: DecorationImage(
-              fit: BoxFit.fill,
-              image:  AssetImage('assets/images/2.jpg'))),*/
-
-
-    );
-  }
-
-  Widget createDrawerItem({IconData icon,String text,GestureTapCallback onTap}){
-    return ListTile(
-      title: Row(
-        children: <Widget>[
-          Icon(icon),
-          Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Text(text),
-          )
-        ],
-      ),
-      onTap: onTap,
-    );
-  }
-
-  void logout() async{
-    _firebaseAuth.signOut();
-    Navigator.of(context).pop();
-    Navigator.push(context, MaterialPageRoute(builder: (context) => new LogIn()));
   }
 }
 

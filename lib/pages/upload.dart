@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:college_services/services/usermanagement.dart';
@@ -17,7 +18,7 @@ class _UploadState extends State<Upload> {
 
   GlobalKey<FormState> _key = GlobalKey();
   TextEditingController _desController = new TextEditingController();
-
+  List<StorageUploadTask> _tasks = <StorageUploadTask>[];
   FocusNode myFocus = FocusNode();
   String Des;
   String _fileName;
@@ -73,17 +74,10 @@ class _UploadState extends State<Upload> {
 
   void _chooseFiles() async{
     try {
-      if (_multipick) {
         print('Saab');
         _path = null;
         _paths = await FilePicker.getMultiFilePath(
             type: FileType.ANY, fileExtension: _extension);
-      } else {
-        print('akela');
-        _paths = null;
-        _path = await FilePicker.getFilePath(
-            type: FileType.ANY, fileExtension: _extension);
-      }
     }catch (e) {
       print("Unsupported operation" + e.toString());
     }
@@ -92,7 +86,7 @@ class _UploadState extends State<Upload> {
       _loadingPath = false;
       _fileName = _path != null
           ? _path.split('/').last
-          : _paths != null ? _paths.keys.toString() : '...';
+          : _paths.keys.toString().replaceAll("(", "").replaceAll(")", "");
     });
 
   }
@@ -135,7 +129,7 @@ class _UploadState extends State<Upload> {
                   ? Padding(
                   padding: const EdgeInsets.only(bottom: 10.0),
                   child: const CircularProgressIndicator())
-                  : _path != null || _paths != null
+                  : _paths != null
                   ? new Container(
                 padding: const EdgeInsets.only(bottom: 30.0),
                 height: MediaQuery.of(context).size.height * 0.50,
@@ -150,7 +144,7 @@ class _UploadState extends State<Upload> {
                         final String name = 'File $index : ' +
                             (isMultiPath
                                 ? _paths.keys.toList()[index]
-                                : _fileName ?? '...');
+                                : _fileName );
                         final path = isMultiPath
                             ? _paths.values.toList()[index].toString()
                             : _path;
@@ -271,12 +265,12 @@ class _UploadState extends State<Upload> {
         if (Des != null) {
           print('ho gya ');
           pr.show();
-          UploadPost();
           Future.delayed (Duration(seconds: 3), ).then((onValue){
-            if(pr.isShowing() && _path == null || _paths == null && Des!=null)
+            if(pr.isShowing())
             {
               print('Pic uploading');
-              uploadPic(context);
+              uploadToFirebase();
+              UploadPost();
               Future.delayed(Duration(seconds: 3),).then((onValue){
                 pr.hide();
               });
@@ -306,10 +300,27 @@ class _UploadState extends State<Upload> {
 
 
   void UploadPost() async{
-   UserManagement().addPost(Name,Des, PhoneNumber,_fileName, context);
+   UserManagement().addPost(Name,Des,PhoneNumber, context);
   }
 
-  Future uploadPic(context) async {
+  void uploadToFirebase() async{
+    _paths.forEach((fileName, filePath) => {upload(fileName, filePath)});
+  }
+
+  void upload(fileName, filePath) async{
+    DateTime date = new DateTime.now();
+    var Date = DateFormat('EEE d MMM kk:mm:ss').format(date);
+    StorageReference storageRef = FirebaseStorage.instance.ref().child("User Posts").child('$PhoneNumber').child('$Date').child('$date');
+    final StorageUploadTask uploadTask = storageRef.putFile(
+      File(filePath)
+    );
+    if(uploadTask.onComplete != null){
+      setState(() {
+        print("le le re baba Done");
+      });
+    }
+    else
+      {print("Nahi hua!!");}
 
   }
 
