@@ -22,6 +22,7 @@ class _UploadState extends State<Upload> {
   FocusNode myFocus = FocusNode();
   String Des;
   String _fileName;
+  String ImageUrl;
   String _path;
   Map<String, String> _paths;
   String _extension;
@@ -33,7 +34,7 @@ class _UploadState extends State<Upload> {
   var users;
   Uint8List image;
   StorageReference imageRef = FirebaseStorage.instance.ref().child("User Profile Photo");
-  String userId,Name,PhoneNumber;
+  String userId,Name,PhoneNumber,UserImageUrl;
   ProgressDialog pr;
 
   Future getImage(context) async{
@@ -65,6 +66,7 @@ class _UploadState extends State<Upload> {
         userFlag = true;
         users = results;
         Name = users['Name'];
+        UserImageUrl = users['Image Url'];
         PhoneNumber = users['Phone Number'];
         getImage(context);
 
@@ -184,7 +186,7 @@ class _UploadState extends State<Upload> {
             backgroundColor: Colors.transparent,
             child: ClipOval(
               child: Center(
-                child: (image!=null)?Image.memory(image,fit: BoxFit.contain,):
+                child: (image!=null)?Image.network(UserImageUrl,fit: BoxFit.contain,):
                 Icon(
                   Icons.person,
                   color: Colors.grey.shade700,
@@ -300,7 +302,7 @@ class _UploadState extends State<Upload> {
 
 
   void UploadPost() async{
-   UserManagement().addPost(Name,Des,PhoneNumber, context);
+   UserManagement().addPost(Name,Des,UserImageUrl,ImageUrl,PhoneNumber, context);
   }
 
   void uploadToFirebase() async{
@@ -311,16 +313,15 @@ class _UploadState extends State<Upload> {
     DateTime date = new DateTime.now();
     var Date = DateFormat('EEE d MMM kk:mm:ss').format(date);
     StorageReference storageRef = FirebaseStorage.instance.ref().child("User Posts").child('$PhoneNumber').child('$Date').child('$date');
-    final StorageUploadTask uploadTask = storageRef.putFile(
-      File(filePath)
-    );
-    if(uploadTask.onComplete != null){
-      setState(() {
-        print("le le re baba Done");
-      });
-    }
-    else
-      {print("Nahi hua!!");}
+    final StorageUploadTask uploadTask = storageRef.putFile(File(filePath));
+    var downUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
+    var url = downUrl.toString();
+    print(url);
+    setState(() {
+      ImageUrl = url;
+      print("le le re baba Done");
+      print(ImageUrl);
+    });
 
   }
 

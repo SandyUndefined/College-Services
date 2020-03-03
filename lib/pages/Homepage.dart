@@ -83,7 +83,7 @@ class _ListPageState extends State<ListPage> {
                  return Card(
                elevation: 4,
                child:Padding(
-                 padding: EdgeInsets.all(15.0),
+                 padding: EdgeInsets.only(left:10.0,top: 10),
                child: InkWell(
                  onTap: () => navigateToDetail(snapshot.data[index]),
                  child: Column(
@@ -97,20 +97,19 @@ class _ListPageState extends State<ListPage> {
                            height: 45,
                    decoration: BoxDecoration(
                              image: DecorationImage(
-                               image: AssetImage('assets/images/user_upload.png'),
+                               image: NetworkImage(snapshot.data[index].data["User Pic"]),
                                 fit: BoxFit.cover,
-
                              ),
                              borderRadius: BorderRadius.all(Radius.circular(50.5)),
                            ),
                          ),
                          Padding(
                            padding:  EdgeInsets.only(left:15),
-                           child: Text(snapshot.data[index].data["Name"],style: TextStyle(fontWeight: FontWeight.w600,fontSize: 20),),
+                           child: Text(snapshot.data[index].data["Name"],style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18),),
                          ),
 
                          Padding(
-                           padding: EdgeInsets.only(left: 18),
+                           padding: EdgeInsets.only(left: 14,top: 5),
                            child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(snapshot.data[index].data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),),
 
                          ),

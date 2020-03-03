@@ -33,6 +33,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
   double _height;
   double _width;
   double _pixelRatio;
+  String ImageUrl;
 
   String phoneNumber;
   String smsCode;
@@ -192,11 +193,14 @@ class _SignUpScreenState extends State<SignUpScreen>{
   //Uploading profile photo to firebase Storage
   Future uploadPic(context) async{
     String filename = phoneNumber;
-    StorageReference firebaseStorageRef = FirebaseStorage.instance.ref().child("User Profile Photo").child(filename);
-    StorageUploadTask uploadTask = firebaseStorageRef.putFile(_Image);
-    await uploadTask.onComplete;
+    StorageReference ref = FirebaseStorage.instance.ref().child("User Profile Photo").child(filename);
+    StorageUploadTask uploadTask = ref.putFile(_Image);
+    var downUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
+    var url = downUrl.toString();
     setState(() {
+      ImageUrl = url;
       print("le le re baba Done");
+      print(ImageUrl);
     });
   }
 
@@ -573,11 +577,12 @@ class _SignUpScreenState extends State<SignUpScreen>{
         if (_key.currentState.validate() && ImageDone == true) {
           print('ho gya ');
           pr.show();
-          Signup();
+
           Future.delayed (Duration(seconds: 3), ).then((onValue){
             if(pr.isShowing())
             {
               uploadPic(context);
+              Signup();
               Future.delayed(Duration(seconds: 3),).then((onValue){
                 pr.hide();
               });
@@ -703,7 +708,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
   void Signup() async{
     if(_key.currentState.validate()){
       FirebaseAuth.instance.createUserWithEmailAndPassword(email: Email, password: Password).then((signedInUser){
-        UserManagement().storeNewUser(Name,Email,Password,phoneNumber,RollNumber,Course,Semester,signedInUser.user, context);
+        UserManagement().storeNewUser(Name,Email,Password,phoneNumber,ImageUrl,RollNumber,Course,Semester,signedInUser.user, context);
       }).catchError((e){
         final snackBar = SnackBar(
           content: Text(e.message),
