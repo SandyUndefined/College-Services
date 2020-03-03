@@ -3,6 +3,7 @@ import 'package:college_services/Home.dart';
 import 'package:college_services/SignUpComplete.dart';
 import 'package:college_services/pages/Homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -44,6 +45,7 @@ class UserManagement {
   addPost(Name,Des,PhoneNumber,context){
     var date = new DateTime.now();
     Firestore.instance.collection('/Posts').document('$Name : $date',).setData({
+      'Creation Time':date,
       'Name': Name,
       'Description': Des,
       'PhoneNumber': PhoneNumber
@@ -58,6 +60,15 @@ class UserManagement {
     });
   }
 
+  getPosts() async{
+    QuerySnapshot Qn = await Firestore.instance.collection("Posts").orderBy("Creation Time", descending: true).getDocuments();
+    return Qn.documents;
+  }
 
+  getUserProfilepic(PhoneNumber,userImage){
+    String filename = PhoneNumber;
+    StorageReference imageRef = FirebaseStorage.instance.ref().child("User Profile Photo");
+    return imageRef.child(filename).putFile(userImage);
+  }
 
 }
