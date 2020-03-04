@@ -37,7 +37,7 @@ class _UploadState extends State<Upload> {
   String userId,Name,PhoneNumber,UserImageUrl;
   ProgressDialog pr;
 
-  Future getImage(context) async{
+/*  Future getImage(context) async{
     int maxSize = 10*1024*1024;
     String filename = PhoneNumber;
     imageRef.child(filename).getData(maxSize).then((data){
@@ -49,7 +49,7 @@ class _UploadState extends State<Upload> {
       print(e.message);
     });
     print(filename);
-  }
+  }*/
 
   @override
   void dispose() {
@@ -68,8 +68,7 @@ class _UploadState extends State<Upload> {
         Name = users['Name'];
         UserImageUrl = users['Image Url'];
         PhoneNumber = users['Phone Number'];
-        getImage(context);
-
+        print(UserImageUrl);
       });
     });
   }
@@ -186,7 +185,7 @@ class _UploadState extends State<Upload> {
             backgroundColor: Colors.transparent,
             child: ClipOval(
               child: Center(
-                child: (image!=null)?Image.network(UserImageUrl,fit: BoxFit.contain,):
+                child: (UserImageUrl!=null)?Image.network(UserImageUrl,fit: BoxFit.contain,):
                 Icon(
                   Icons.person,
                   color: Colors.grey.shade700,
