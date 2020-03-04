@@ -56,7 +56,6 @@ class _ListPageState extends State<ListPage> {
 
   Future _data;
 
-
   @override
   void initState() {
     super.initState();

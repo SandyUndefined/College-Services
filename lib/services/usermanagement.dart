@@ -68,10 +68,5 @@ class UserManagement {
     return Qn.documents;
   }
 
-  getUserProfilepic(PhoneNumber,userImage){
-    String filename = PhoneNumber;
-    StorageReference imageRef = FirebaseStorage.instance.ref().child("User Profile Photo");
-    return imageRef.child(filename).putFile(userImage);
-  }
 
 }
