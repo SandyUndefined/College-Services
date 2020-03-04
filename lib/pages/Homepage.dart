@@ -32,7 +32,31 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            expandedHeight: 150.0,
+            floating: false,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+            title: Text(widget.post.data["Name"],
+            ),
+              background: Image.asset('assets/images/2.jpg',
+                color: Color.fromRGBO(255, 255, 255, 0.7),
+                colorBlendMode: BlendMode.modulate,
+                fit: BoxFit.cover,
+              ),
+             ),
+          ),
+          SliverList(
+            delegate: SliverChildBuilderDelegate((context,index) => ListTile(
+              title: Text("sandeeP $index"),
+          ),
+            ),
+          ),
+        ],
+      ),
+      /*appBar: AppBar(
        title: Text(widget.post.data["Name"]),
       ),
       body: Container(
@@ -42,7 +66,7 @@ class _DetailPageState extends State<DetailPage> {
             subtitle: Text(widget.post.data["Description"]),
           ),
         ),
-      ),
+      ),*/
     );
   }
 }
