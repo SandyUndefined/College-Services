@@ -580,7 +580,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
         if (_key.currentState.validate() && ImageDone == true) {
           print('ho gya ');
           pr.show();
-          Future.delayed (Duration(seconds: 8), ).then((onValue){
+          Future.delayed (Duration(seconds: 3), ).then((onValue){
             Signup();
             if(pr.isShowing())
             {
@@ -709,9 +709,9 @@ class _SignUpScreenState extends State<SignUpScreen>{
 
   void Signup() async{
     if(_key.currentState.validate()){
-      FirebaseAuth.instance.createUserWithEmailAndPassword(email: Email, password: Password).then((signedInUser){
-        uploadPic();
-        UserManagement().storeNewUser(Name,Email/*,Password*/,phoneNumber,ImageUrl,RollNumber,Course,Semester,signedInUser.user, context);
+      FirebaseAuth.instance.createUserWithEmailAndPassword(email: Email, password: Password).then((signedInUser) async {
+        await uploadPic();
+        UserManagement().storeNewUser(Name,Email,Password,phoneNumber,ImageUrl,RollNumber,Course,Semester,signedInUser.user, context);
       }).catchError((e){
         final snackBar = SnackBar(
           content: Text(e.message),

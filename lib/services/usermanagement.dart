@@ -10,12 +10,12 @@ import 'package:flutter/widgets.dart';
 class UserManagement {
  /* final String uid;
   UserManagement({ this.uid });*/
-  storeNewUser(Name,Email/*,password*/,phonenumber,ImageUrl,rollnumber,course,sem,user,context){
+  storeNewUser(Name,Email,password,phonenumber,ImageUrl,rollnumber,course,sem,user,context){
     Firestore.instance.collection('/users').document(user.uid).setData({
       'Name' : Name,
       'Email' : Email,
       'Image Url' : ImageUrl,
-      /*'Password' : password,*/
+      'Password' : password,
       'Phone Number' : phonenumber,
       'Roll Number' : rollnumber,
       'College' : 'Siliguri Institute of Technology',
