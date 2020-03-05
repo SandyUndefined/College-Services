@@ -37,20 +37,6 @@ class _UploadState extends State<Upload> {
   String userId,Name,PhoneNumber,UserImageUrl;
   ProgressDialog pr;
 
-/*  Future getImage(context) async{
-    int maxSize = 10*1024*1024;
-    String filename = PhoneNumber;
-    imageRef.child(filename).getData(maxSize).then((data){
-      setState(() {
-        image = data;
-        print("ho ga bhai");
-      });
-    }).catchError((e){
-      print(e.message);
-    });
-    print(filename);
-  }*/
-
   @override
   void dispose() {
     // other dispose methods

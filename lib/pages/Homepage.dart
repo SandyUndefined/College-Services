@@ -29,59 +29,94 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(/*
-            backgroundColor:Colors.black38,*/
-            expandedHeight: 150.0,
-            floating: false,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-            title: Text(widget.post.data["Name"],style: TextStyle(color: Colors.black87),
-            ),
-
-              background: Image.network('http://www.sittechno.org/photogallery/default_photo_details.php?id=167&ck=92a37594e79bb18f4a6124960353f06e',
-                color: Color.fromRGBO(255, 255, 255, 0.7),
-                colorBlendMode: BlendMode.modulate,
-                fit: BoxFit.cover,
+      appBar: AppBar(
+        title: Text(widget.post.data["Name"],
+        ),
+        actions: <Widget>[
+          new Padding(padding: EdgeInsets.only(top: 8,bottom: 8,right: 15),
+            child: new GestureDetector(
+              onTap: () => showProfile(),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Image.network(widget.post.data["User Pic"]),
               ),
-             ),
-            actions: <Widget>[
-              CircleAvatar(
-                child: ClipOval(
-                  child: Container(
-                    width: 30,
-                  height: 30,
-                  child: Image.network(widget.post.data["User Pic"]),
-                      ),
-                ),
-              ),
-            ],
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context,index) => ListTile(
-              title: Text("sandeeP $index"),
-          ),
             ),
           ),
         ],
       ),
-      /*appBar: AppBar(
-       title: Text(widget.post.data["Name"]),
-      ),
       body: Container(
         child: Card(
-          child: ListTile(
-            title: Text(widget.post.data["Name"]),
-            subtitle: Text(widget.post.data["Description"]),
+          elevation: 4,
+          child:Padding(
+            padding: EdgeInsets.only(left:10.0,top: 10),
+            child: InkWell(
+              onTap: () => showProfile(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  new Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(left: 25),
+                        child: Text(widget.post.data["Description"],style: TextStyle(fontSize: 16),),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 25,top: 10),
+                    child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(widget.post.data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 75,top: 15,bottom: 8),
+                    child: Text(widget.post.data.length.toString()+"Files uploaded",style: TextStyle(color: Colors.blueAccent,fontSize: 14,fontStyle: FontStyle.italic),),
+                  ),
+                  Divider(),
+                  new Row(
+                    children: <Widget>[
+                      Padding(
+                        padding:EdgeInsets.only(left: 5),
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.favorite_border,
+                              color: Colors.redAccent, size: 23.0),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 65),
+                        child:IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.chat_bubble_outline,
+                            color: Colors.blue,size: 23.0,),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 75),
+                        child:IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.near_me,
+                            color: Colors.blue,size: 23.0,),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),*/
+      ),
     );
   }
+}
+
+showProfile(){
+print("Image Click");
 }
 
 class ListPage extends StatefulWidget {
@@ -143,13 +178,12 @@ class _ListPageState extends State<ListPage> {
                            padding:  EdgeInsets.only(left:15),
                            child: Text(snapshot.data[index].data["Name"],style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18),),
                          ),
-
-                         Padding(
-                           padding: EdgeInsets.only(left: 14,top: 5),
-                           child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(snapshot.data[index].data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),),
-
-                         ),
                          ],
+                     ),
+                     Padding(
+                       padding: EdgeInsets.only(left: 60,bottom: 10),
+                       child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(snapshot.data[index].data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),),
+
                      ),
                      Padding(
                        padding: EdgeInsets.only(left: 75),
@@ -193,7 +227,6 @@ class _ListPageState extends State<ListPage> {
                ),
                ),
              );
-
            });
          }
       }),
