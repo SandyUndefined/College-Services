@@ -30,6 +30,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen>{
 
+  String url;
   double _height;
   double _width;
   double _pixelRatio;
@@ -38,6 +39,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
   String phoneNumber;
   String smsCode;
   String VerifyId;
+
 
   String Name;
   String RollNumber;
@@ -78,6 +80,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
   bool ImageDone = false;
 
   ProgressDialog pr;
+
 
   @override
   Widget build(BuildContext context) {
@@ -191,22 +194,17 @@ class _SignUpScreenState extends State<SignUpScreen>{
   }
 
   //Uploading profile photo to firebase Storage
-  Future<String> uploadPic(context) async{
+  Future uploadPic() async{
     String filename = phoneNumber;
     StorageReference ref = FirebaseStorage.instance.ref().child("User Profile Photo").child(filename);
     StorageUploadTask uploadTask = ref.putFile(_Image);
     var downUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
-    var url = downUrl.toString();
-     setState(() {
-       if(url==null){
-         print("le le re baba Done");
-         print(ImageUrl);
-       }
-       else{
-         ImageUrl = url;
-       }
-     });
-    return ImageUrl;
+     url = downUrl.toString();
+    print(url);
+    setState(() {
+      ImageUrl=url;
+      print(ImageUrl);
+    });
   }
 
   Widget form(){
@@ -582,11 +580,11 @@ class _SignUpScreenState extends State<SignUpScreen>{
         if (_key.currentState.validate() && ImageDone == true) {
           print('ho gya ');
           pr.show();
-          uploadPic(context);
           Future.delayed (Duration(seconds: 8), ).then((onValue){
+            Signup();
             if(pr.isShowing())
             {
-              Signup();
+
               Future.delayed(Duration(seconds: 3),).then((onValue){
                 pr.hide();
               });
@@ -712,9 +710,8 @@ class _SignUpScreenState extends State<SignUpScreen>{
   void Signup() async{
     if(_key.currentState.validate()){
       FirebaseAuth.instance.createUserWithEmailAndPassword(email: Email, password: Password).then((signedInUser){
-        print('this is my image $ImageUrl');
-        print('this is my url');
-        UserManagement().storeNewUser(Name,Email,Password,phoneNumber,ImageUrl,RollNumber,Course,Semester,signedInUser.user, context);
+        uploadPic();
+        UserManagement().storeNewUser(Name,Email/*,Password*/,phoneNumber,ImageUrl,RollNumber,Course,Semester,signedInUser.user, context);
       }).catchError((e){
         final snackBar = SnackBar(
           content: Text(e.message),
@@ -724,7 +721,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
       });
     }
     else{
-      print("nulllllll");
+      print("NULL");
     }
   }
 

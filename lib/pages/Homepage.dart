@@ -34,19 +34,32 @@ class _DetailPageState extends State<DetailPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverAppBar(
+          SliverAppBar(/*
+            backgroundColor:Colors.black38,*/
             expandedHeight: 150.0,
             floating: false,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-            title: Text(widget.post.data["Name"],
+            title: Text(widget.post.data["Name"],style: TextStyle(color: Colors.black87),
             ),
-              background: Image.asset('assets/images/2.jpg',
+
+              background: Image.network('http://www.sittechno.org/photogallery/default_photo_details.php?id=167&ck=92a37594e79bb18f4a6124960353f06e',
                 color: Color.fromRGBO(255, 255, 255, 0.7),
                 colorBlendMode: BlendMode.modulate,
                 fit: BoxFit.cover,
               ),
              ),
+            actions: <Widget>[
+              CircleAvatar(
+                child: ClipOval(
+                  child: Container(
+                    width: 30,
+                  height: 30,
+                  child: Image.network(widget.post.data["User Pic"]),
+                      ),
+                ),
+              ),
+            ],
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate((context,index) => ListTile(
