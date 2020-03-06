@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class UserManagement {
+  String uid;
+
  /* final String uid;
   UserManagement({ this.uid });*/
   storeNewUser(Name,Email,password,phonenumber,ImageUrl,rollnumber,course,sem,user,context){
@@ -36,6 +38,25 @@ class UserManagement {
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     print(userId);
     return Firestore.instance.collection('users').document(userId).get();
+  }
+  getDataTemp() async{
+    uid = getCurrentUser();
+    if(uid==null){
+      print("exit");
+    }
+    else{
+      print(uid);
+    }/*
+    DocumentReference docRef = await Firestore.instance.collection("Users").document(uid);
+    print(docRef);
+    var data;
+    docRef.get().then((datasnapshot){
+      if(datasnapshot.exists){
+        data = datasnapshot;
+        print(data);
+      }
+    });
+    return data;*/
   }
 
   getCurrentUser()async{
