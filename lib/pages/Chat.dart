@@ -22,21 +22,16 @@ class Chat extends StatelessWidget {
       appBar: new AppBar(
         title: Row(
             children: <Widget>[
-              InkWell(
-                  onTap: () {
-                    print ('Click Profile Pic');
-                  },
-                  child: Container(
-                    width: 42,
-                    height: 42,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: NetworkImage(peerAvatar),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                    ),
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: NetworkImage(peerAvatar),
+                    fit: BoxFit.cover,
                   ),
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left:12.0),
@@ -436,7 +431,19 @@ class ChatScreenState extends State<ChatScreen> {
                       controller: textEditingController,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        suffixIcon: GestureDetector(child: Icon(Icons.near_me,color: Colors.blueAccent,),
+                        suffixIcon: GestureDetector(
+                          child: Container(
+                            width: 54,
+                            height: 54,
+                            decoration: new BoxDecoration(
+                              color: Color.fromRGBO(0,21,43,1),
+                              shape: BoxShape.circle,
+                            ),
+                              child: Icon(
+                                Icons.near_me,
+                                color: Colors.white,
+                              ),
+                          ),
                         onTap:  () => onSendMessage(textEditingController.text, 0),
                         ),
                         hintText: 'Type your message...',
