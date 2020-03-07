@@ -65,7 +65,7 @@ class _MessagesState extends State<Messages> {
       print("yess!");
       return userFlag ? Container(
         child: Card(
-          elevation: 1,
+          elevation: 2,
           child:Padding(
             padding: EdgeInsets.only(left:10.0,top: 10),
             child: Column(
