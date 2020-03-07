@@ -12,17 +12,38 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Chat extends StatelessWidget {
   final String peerId;
   final String peerAvatar;
+  final String peerName;
 
-  Chat({Key key, @required this.peerId, @required this.peerAvatar}) : super(key: key);
+  Chat({Key key, @required this.peerId,@required this.peerName, @required this.peerAvatar}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text(
-          'CHAT',
-        ),
-        centerTitle: true,
+        title: Row(
+            children: <Widget>[
+              InkWell(
+                  onTap: () {
+                    print ('Click Profile Pic');
+                  },
+                  child: Container(
+                    width: 42,
+                    height: 42,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(peerAvatar),
+                        fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                    ),
+                  ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left:12.0),
+                child: Text(peerName,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600),),
+              )
+            ],
+          ),
       ),
       body: new ChatScreen(
         peerId: peerId,
@@ -35,7 +56,6 @@ class Chat extends StatelessWidget {
 class ChatScreen extends StatefulWidget {
   final String peerId;
   final String peerAvatar;
-
   ChatScreen({Key key, @required this.peerId, @required this.peerAvatar}) : super(key: key);
 
   @override
@@ -66,13 +86,10 @@ class ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     focusNode.addListener(onFocusChange);
-
     groupChatId = '';
-
     isLoading = false;
     isShowSticker = false;
     imageUrl = '';
-
     readLocal();
   }
 
@@ -361,19 +378,6 @@ class ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  Future<bool> onBackPress() {
-    if (isShowSticker) {
-      setState(() {
-        isShowSticker = false;
-      });
-    } else {
-      Firestore.instance.collection('users').document(id).updateData({'chattingWith': null});
-      Navigator.pop(context);
-    }
-
-    return Future.value(false);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -382,19 +386,18 @@ class ChatScreenState extends State<ChatScreen> {
           children: <Widget>[
             // List of messages
             buildListMessage(),
-
             // Input content
             buildInput(),
           ],
         ),
 
         // Loading
-        buildLoading()
+        /*buildLoading()*/
       ],
     );
   }
 
-  Widget buildLoading() {
+ /* Widget buildLoading() {
     return Positioned(
       child: isLoading
           ? Container(
@@ -405,58 +408,48 @@ class ChatScreenState extends State<ChatScreen> {
       )
           : Container(),
     );
-  }
+  }*/
 
   Widget buildInput() {
     return Container(
       child: Row(
         children: <Widget>[
-          // Button send image
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 1.0),
-              child: new IconButton(
-                icon: new Icon(Icons.image),
-                onPressed: getImage,
-                color: Colors.blueAccent,
-              ),
-            ),
-            color: Colors.white,
-          ),
-
-          // Edit text
           Flexible(
             child: Container(
-              child: TextField(
-                style: TextStyle(color: Colors.blueAccent, fontSize: 15.0),
-                controller: textEditingController,
-                decoration: InputDecoration.collapsed(
-                  hintText: 'Type your message...',
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
-                focusNode: focusNode,
+              width: double.infinity,
+              height: 55.0,
+              margin: EdgeInsets.all(10),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(241, 243, 243, 1),
+                border: Border.all(
+                    color: Colors.grey,// set border color
+                    width: 0.8),   // set border width
+                borderRadius: BorderRadius.all(
+                    Radius.circular(30.0)
+                ), // set rounded corner radius
               ),
+                 child: Padding(
+                    padding: const EdgeInsets.only(left:15.0),
+                    child: TextField(
+                      style: TextStyle(color: Colors.black, fontSize: 16.0),
+                      controller: textEditingController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        suffixIcon: GestureDetector(child: Icon(Icons.near_me,color: Colors.blueAccent,),
+                        onTap:  () => onSendMessage(textEditingController.text, 0),
+                        ),
+                        hintText: 'Type your message...',
+                        hintStyle: TextStyle(color: Colors.grey),
+                      ),
+                      focusNode: focusNode,
+                    ),
+                   
+                  ),
             ),
-          ),
-
-          // Button send message
-          Material(
-            child: new Container(
-              margin: new EdgeInsets.symmetric(horizontal: 8.0),
-              child: new IconButton(
-                icon: new Icon(Icons.send),
-                onPressed: () => onSendMessage(textEditingController.text, 0),
-                color: Colors.blueAccent,
-              ),
-            ),
-            color: Colors.white,
           ),
         ],
       ),
-      width: double.infinity,
-      height: 50.0,
-      decoration: new BoxDecoration(
-          border: new Border(top: new BorderSide(color: Colors.grey, width: 0.5)), color: Colors.white),
     );
   }
 

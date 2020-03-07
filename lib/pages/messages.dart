@@ -43,14 +43,10 @@ class _MessagesState extends State<Messages> {
                   );
                 }
                 else{
-                  return ListView.separated(
-
+                  return ListView.builder(
                     padding: EdgeInsets.all(8.0),
                     itemBuilder: (context,index) => buildItem(context,snapshot.data.documents[index]),
                     itemCount: snapshot.data.documents.length,
-                    separatorBuilder: ((context,index){
-                      return Divider();
-                    }),
                   );
                 }
               },
@@ -68,23 +64,8 @@ class _MessagesState extends State<Messages> {
         child: Row(
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(left:15.0),
-              child: RaisedButton(
-                shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
-                color: Color.fromRGBO(255,188,114, 1),
-                textColor: Colors.black,
-                padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-                child: Container(
-                  alignment: Alignment.center,
-                  width: 250,
-                  child: Text(
-                    "Sign Up",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
-                  ),
-                ),
-                onPressed: ()=>{},
+              padding: const EdgeInsets.only(left:20.0,top: 30,bottom: 15,),
+              child: Text("All Users",style: TextStyle(fontSize: 22,fontWeight: FontWeight.w800,color: Colors.black54,),
               ),
             ),
           ],
@@ -95,50 +76,42 @@ class _MessagesState extends State<Messages> {
       print("yess!");
       return userFlag ? Container(
 
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: const BorderRadius.all(
-              Radius.circular(5.0),
-            ),
-            side: BorderSide(
-              color: Colors.grey,
-              width: .5,
-            ),
-          ),
-          elevation: 2,
-          child:Padding(
-            padding: EdgeInsets.only(top: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                InkWell(
-                  child: new Row(
-                    children: <Widget>[
-                      Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(document["Image Url"]),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(50.5)),
+        child: Padding(
+          padding: EdgeInsets.only(top: 15,left: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              InkWell(
+                child: new Row(
+                  children: <Widget>[
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: NetworkImage(document["Image Url"]),
+                          fit: BoxFit.cover,
                         ),
+                        border: Border.all(
+                          color: Colors.blueGrey,
+                          width: .8,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(50.5)),
                       ),
-                      Padding(
-                        padding:  EdgeInsets.only(left:25),
-                        child: Text(document["Name"],style: TextStyle(fontWeight: FontWeight.w800,fontSize: 14),),
-                      ),
-                    ],
-                  ),
-                  onTap:()  {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Chat(peerId: document.documentID, peerAvatar: document['Image Url'],
-                  )));
-                  },
+                    ),
+                    Padding(
+                      padding:  EdgeInsets.only(left:25),
+                      child: Text(document["Name"],style: TextStyle(fontWeight: FontWeight.w800,fontSize: 14),),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+                onTap:()  {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Chat(peerId: document.documentID,peerName: document['Name'], peerAvatar: document['Image Url'],
+                )));
+                },
+              ),
+            ],
           ),
         ),
       )
