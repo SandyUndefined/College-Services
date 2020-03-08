@@ -58,24 +58,13 @@ class _MessagesState extends State<Messages> {
   }
 
   Widget buildItem(BuildContext context,DocumentSnapshot document){
-    if(document['Phone Number']== PhoneNumber){
-      print("NO");
-      return Container(
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left:20.0,top: 30,bottom: 15,),
-              child: Text("All Users",style: TextStyle(fontSize: 22,fontWeight: FontWeight.w800,color: Colors.black54,),
-              ),
-            ),
-          ],
-        ),
-      );
+    if(document['Phone Number'] == PhoneNumber){
+      print("NO $PhoneNumber");
+      return Container();
     }
     else{
       print("yess!");
       return userFlag ? Container(
-
         child: Padding(
           padding: EdgeInsets.only(top: 15,left: 10),
           child: Column(
