@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:college_services/services/FullPhoto.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
@@ -105,15 +106,12 @@ class ChatScreenState extends State<ChatScreen> {
     } else {
       groupChatId = '$peerId-$id';
     }
-
     Firestore.instance.collection('users').document(id).updateData({'chattingWith': peerId});
-
     setState(() {});
   }
 
   Future getImage() async {
     imageFile = (await ImagePicker.pickImage(source: ImageSource.gallery));
-
     if (imageFile != null) {
       setState(() {
         isLoading = true;
@@ -131,7 +129,7 @@ class ChatScreenState extends State<ChatScreen> {
       imageUrl = downloadUrl;
       setState(() {
         isLoading = false;
-        onSendMessage(imageUrl, 1);
+       onSendMessage(imageUrl, 1);
       });
     }, onError: (err) {
       setState(() {
@@ -141,11 +139,9 @@ class ChatScreenState extends State<ChatScreen> {
     });
   }
 
-  void onSendMessage(String content, int type) {
-    // type: 0 = text, 1 = image, 2 = sticker
+  void onSendMessage(String content, int type) async{
     if (content.trim() != '') {
       textEditingController.clear();
-
       var documentReference = Firestore.instance
           .collection('messages')
           .document(groupChatId)
@@ -387,12 +383,12 @@ class ChatScreenState extends State<ChatScreen> {
         ),
 
         // Loading
-        /*buildLoading()*/
+        buildLoading()
       ],
     );
   }
 
- /* Widget buildLoading() {
+  Widget buildLoading() {
     return Positioned(
       child: isLoading
           ? Container(
@@ -403,7 +399,7 @@ class ChatScreenState extends State<ChatScreen> {
       )
           : Container(),
     );
-  }*/
+  }
 
   Widget buildInput() {
     return Container(
@@ -424,35 +420,47 @@ class ChatScreenState extends State<ChatScreen> {
                     Radius.circular(30.0)
                 ), // set rounded corner radius
               ),
-                 child: Padding(
-                    padding: const EdgeInsets.only(left:15.0),
-                    child: TextField(
-                      style: TextStyle(color: Colors.black, fontSize: 16.0),
-                      controller: textEditingController,
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        suffixIcon: GestureDetector(
-                          child: Container(
-                            width: 54,
-                            height: 54,
-                            decoration: new BoxDecoration(
-                              color: Color.fromRGBO(0,21,43,1),
-                              shape: BoxShape.circle,
-                            ),
-                              child: Icon(
-                                Icons.near_me,
-                                color: Colors.white,
-                              ),
-                          ),
-                        onTap:  () => onSendMessage(textEditingController.text, 0),
-                        ),
-                        hintText: 'Type your message...',
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
-                      focusNode: focusNode,
-                    ),
-                   
-                  ),
+                 child: TextField(
+                   textAlign: TextAlign.left,
+                   style: TextStyle(color: Colors.black, fontSize: 16.0),
+                   controller: textEditingController,
+                   decoration: InputDecoration(
+                     border: InputBorder.none,
+                     prefixIcon: GestureDetector(
+                     child: Container(
+                     width: 54,
+                     height: 54,
+                     decoration: new BoxDecoration(
+                       color: Color.fromRGBO(0,21,43,1),
+                       shape: BoxShape.circle,
+                     ),
+                     child: Icon(
+                       Icons.image,
+                       color: Colors.white,
+                     ),
+                   ),
+                   onTap:  () => getImage(),
+                 ),
+                     suffixIcon: GestureDetector(
+                       child: Container(
+                         width: 54,
+                         height: 54,
+                         decoration: new BoxDecoration(
+                           color: Color.fromRGBO(0,21,43,1),
+                           shape: BoxShape.circle,
+                         ),
+                           child: Icon(
+                             Icons.near_me,
+                             color: Colors.white,
+                           ),
+                       ),
+                     onTap:  () => onSendMessage(textEditingController.text, 0),
+                     ),
+                     hintText: 'Type your message...',
+                     hintStyle: TextStyle(color: Colors.grey),
+                   ),
+                   focusNode: focusNode,
+                 ),
             ),
           ),
         ],
@@ -470,7 +478,7 @@ class ChatScreenState extends State<ChatScreen> {
             .document(groupChatId)
             .collection(groupChatId)
             .orderBy('timestamp', descending: true)
-            .limit(20)
+            .limit(8)
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
