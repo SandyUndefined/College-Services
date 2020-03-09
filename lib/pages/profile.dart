@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 
 class Profile extends StatefulWidget {
+  final String userID;
+  Profile({this.userID});
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -13,11 +15,12 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   bool userFlag = false;
   var users;
-  String userId,Name,Email,PhoneNumber,Image,RollNumber,College,Course,Semester;
+  String userID,Name,Email,PhoneNumber,Image,RollNumber,College,Course,Semester;
   @override
   void initState() {
     super.initState();
-    UserManagement().getData().then((results) {
+    userID = widget.userID;
+    UserManagement().getProfileData(userID).then((results) async{
     setState(() {
       userFlag = true;
        users = results;

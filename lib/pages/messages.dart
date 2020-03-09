@@ -82,16 +82,31 @@ class _MessagesState extends State<Messages> {
                           image: NetworkImage(document["Image Url"]),
                           fit: BoxFit.cover,
                         ),
-                        border: Border.all(
-                          color: Colors.blueGrey,
-                          width: .8,
-                        ),
                         borderRadius: BorderRadius.all(Radius.circular(50.5)),
                       ),
                     ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding:  EdgeInsets.only(left:15),
+                          child: Text(document["Name"],style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 25,top: 5),
+                          child: Text("Send your first message",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w800,color: Colors.blueAccent),),
+                        ),
+                      ],
+                    ),
                     Padding(
-                      padding:  EdgeInsets.only(left:25),
-                      child: Text(document["Name"],style: TextStyle(fontWeight: FontWeight.w800,fontSize: 14),),
+                      padding: const EdgeInsets.only(left:17.0),
+                      child: Text("09:34 PM",
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87
+                        ),
+                      ),
                     ),
                   ],
                 ),

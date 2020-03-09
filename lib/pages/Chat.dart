@@ -39,9 +39,18 @@ class Chat extends StatelessWidget {
             ],
           ),
       ),
-      body: new ChatScreen(
-        peerId: peerId,
-        peerAvatar: peerAvatar,
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage("https://fsa.zobj.net/crop.php?r=BjF5BN7Sbgdm4bmDfSvzltsVYJrWqnlIDXW06ZPE7_L3FQiOG4Y_Sz3aUVUo5P7jjIHXyR46fJceFafJUIOOh7Hhy7hc5vv_OqhtYiW2dFQkm_2bcESjvL9XKUNVaEL-m4JLL07i2eiy8-ac"),
+            fit: BoxFit.cover,
+
+          ),
+        ),
+        child: new ChatScreen(
+          peerId: peerId,
+          peerAvatar: peerAvatar,
+        ),
       ),
     );
   }
@@ -348,8 +357,6 @@ class ChatScreenState extends State<ChatScreen> {
             buildInput(),
           ],
         ),
-
-        // Loading
         buildLoading()
       ],
     );
@@ -379,10 +386,7 @@ class ChatScreenState extends State<ChatScreen> {
               margin: EdgeInsets.all(10),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: Color.fromRGBO(241, 243, 243, 1),
-                border: Border.all(
-                    color: Colors.grey,// set border color
-                    width: 0.8),   // set border width
+                color: Color.fromRGBO(241, 243, 243, 1), // set border width
                 borderRadius: BorderRadius.all(
                     Radius.circular(30.0)
                 ), // set rounded corner radius
@@ -397,8 +401,8 @@ class ChatScreenState extends State<ChatScreen> {
                        border: InputBorder.none,
                        suffixIcon: GestureDetector(
                          child: Container(
-                           width: 48,
-                           height: 48,
+                           width: 50,
+                           height: 50,
                            decoration: new BoxDecoration(
                              color: Color.fromRGBO(0,21,43,1),
                              shape: BoxShape.circle,

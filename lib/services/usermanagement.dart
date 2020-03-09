@@ -9,9 +9,6 @@ import 'package:flutter/widgets.dart';
 
 class UserManagement {
   String uid;
-
- /* final String uid;
-  UserManagement({ this.uid });*/
   storeNewUser(Name,Email,password,phonenumber,ImageUrl,rollnumber,course,sem,user,context){
     Firestore.instance.collection('/users').document(user.uid).setData({
       'Name' : Name,
@@ -40,16 +37,30 @@ class UserManagement {
     return Firestore.instance.collection('users').document(userId).get();
   }
 
+  getProfileData(userID) async{
+    print(' this is in usermanagement $userID');
+    String userId = (await FirebaseAuth.instance.currentUser()).uid;
+    print('Current user $userId');
+    if(userID!=null){
+      return Firestore.instance.collection('users').document(userID).get();
+    }
+    else{
+      return Firestore.instance.collection('users').document(userId).get();
+    }
+   }
+
   getCurrentUser()async{
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     return userId;
   }
 
-  addPost(Name,Des,UserImageUrl,ImageUrl,PhoneNumber,context){
+  addPost(Name,Des,UserImageUrl,ImageUrl,PhoneNumber,context) async {
     var date = new DateTime.now();
+    String userId = (await FirebaseAuth.instance.currentUser()).uid;
     Firestore.instance.collection('/Posts').document('$Name : $date',).setData({
       'Creation Time':date,
       'Name': Name,
+      'Userid':userId,
       'User Pic': UserImageUrl,
       'Image Urls' : ImageUrl,
       'Description': Des,
