@@ -2,11 +2,9 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:college_services/services/FullPhoto.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -110,35 +108,6 @@ class ChatScreenState extends State<ChatScreen> {
     setState(() {});
   }
 
-  Future getImage() async {
-    imageFile = (await ImagePicker.pickImage(source: ImageSource.gallery));
-    if (imageFile != null) {
-      setState(() {
-        isLoading = true;
-      });
-      uploadFile();
-    }
-  }
-
-  Future uploadFile() async {
-    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    StorageReference reference = FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask uploadTask = reference.putFile(imageFile);
-    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
-    storageTaskSnapshot.ref.getDownloadURL().then((downloadUrl) {
-      imageUrl = downloadUrl;
-      setState(() {
-        isLoading = false;
-       onSendMessage(imageUrl, 1);
-      });
-    }, onError: (err) {
-      setState(() {
-        isLoading = false;
-      });
-      print('This file is not an image');
-    });
-  }
-
   void onSendMessage(String content, int type) async{
     if (content.trim() != '') {
       textEditingController.clear();
@@ -168,11 +137,9 @@ class ChatScreenState extends State<ChatScreen> {
 
   Widget buildItem(int index, DocumentSnapshot document) {
     if (document['idFrom'] == id) {
-      // Right (my message)
       return Row(
         children: <Widget>[
           document['type'] == 0
-          // Text
               ? Container(
             child: Text(
               document['content'],
@@ -408,7 +375,7 @@ class ChatScreenState extends State<ChatScreen> {
           Flexible(
             child: Container(
               width: double.infinity,
-              height: 55.0,
+              height: 50.0,
               margin: EdgeInsets.all(10),
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -420,46 +387,34 @@ class ChatScreenState extends State<ChatScreen> {
                     Radius.circular(30.0)
                 ), // set rounded corner radius
               ),
-                 child: TextField(
-                   textAlign: TextAlign.left,
-                   style: TextStyle(color: Colors.black, fontSize: 16.0),
-                   controller: textEditingController,
-                   decoration: InputDecoration(
-                     border: InputBorder.none,
-                     prefixIcon: GestureDetector(
-                     child: Container(
-                     width: 54,
-                     height: 54,
-                     decoration: new BoxDecoration(
-                       color: Color.fromRGBO(0,21,43,1),
-                       shape: BoxShape.circle,
-                     ),
-                     child: Icon(
-                       Icons.image,
-                       color: Colors.white,
-                     ),
-                   ),
-                   onTap:  () => getImage(),
-                 ),
-                     suffixIcon: GestureDetector(
-                       child: Container(
-                         width: 54,
-                         height: 54,
-                         decoration: new BoxDecoration(
-                           color: Color.fromRGBO(0,21,43,1),
-                           shape: BoxShape.circle,
-                         ),
-                           child: Icon(
-                             Icons.near_me,
-                             color: Colors.white,
+                 child: Padding(
+                   padding: const EdgeInsets.only(left:17.0),
+                   child: TextField(
+                     textAlign: TextAlign.left,
+                     style: TextStyle(color: Colors.black, fontSize: 16.0),
+                     controller: textEditingController,
+                     decoration: InputDecoration(
+                       border: InputBorder.none,
+                       suffixIcon: GestureDetector(
+                         child: Container(
+                           width: 48,
+                           height: 48,
+                           decoration: new BoxDecoration(
+                             color: Color.fromRGBO(0,21,43,1),
+                             shape: BoxShape.circle,
                            ),
+                             child: Icon(
+                               Icons.near_me,
+                               color: Colors.white,
+                             ),
+                         ),
+                       onTap:  () => onSendMessage(textEditingController.text, 0),
                        ),
-                     onTap:  () => onSendMessage(textEditingController.text, 0),
+                       hintText: 'Type your message...',
+                       hintStyle: TextStyle(color: Colors.grey),
                      ),
-                     hintText: 'Type your message...',
-                     hintStyle: TextStyle(color: Colors.grey),
+                     focusNode: focusNode,
                    ),
-                   focusNode: focusNode,
                  ),
             ),
           ),
