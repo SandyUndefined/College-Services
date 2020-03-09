@@ -101,7 +101,7 @@ class _UploadState extends State<Upload> {
       appBar: AppBar(
         title: Text('Create Post'),
       ),
-      body: Container(
+      body: userFlag ? Container(
         child:SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -157,6 +157,9 @@ class _UploadState extends State<Upload> {
           ]
         ),
         ),
+      )
+        : new Container(
+        child: Center(child: CircularProgressIndicator()),
       ),
     );
 

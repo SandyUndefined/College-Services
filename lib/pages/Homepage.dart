@@ -36,17 +36,6 @@ class _DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: Text(widget.post.data["Name"],
         ),
-        actions: <Widget>[
-          new Padding(padding: EdgeInsets.only(top: 8,bottom: 8,right: 15),
-            child: new GestureDetector(
-              onTap: () => showProfile(),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: Image.network(widget.post.data["User Pic"]),
-              ),
-            ),
-          ),
-        ],
       ),
       body: Container(
         child: Card(
