@@ -114,6 +114,7 @@ class _LogInScreenState extends State<LogInScreen> {
       padding: EdgeInsets.only(left: 20, right: 20),
       width: _width/1.3,
       child: TextFormField(
+          textCapitalization: TextCapitalization.sentences,
           keyboardType: TextInputType.emailAddress,
           controller: controller,
           obscureText: obsecure,
@@ -152,6 +153,7 @@ class _LogInScreenState extends State<LogInScreen> {
       width: _width/1.3,
       padding: EdgeInsets.only(left: 20, right: 20),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
           validator: validatepassword,
           focusNode: _focusNodePassword,
           keyboardType: TextInputType.text,

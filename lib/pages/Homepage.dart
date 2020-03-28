@@ -72,9 +72,11 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 25),
-                      child: Text(widget.post.data["Description"],style: TextStyle(fontSize: 16),),
+                    Flexible(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 25,right: 15),
+                        child: Text(widget.post.data["Description"],style: TextStyle(fontSize: 16),),
+                      ),
                     ),
                   ],
                 ),
@@ -192,9 +194,11 @@ class _ListPageState extends State<ListPage> {
                        child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(snapshot.data[index].data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),),
 
                      ),
-                     Padding(
-                       padding: EdgeInsets.only(left: 75),
+                     Flexible(
+                     child:Padding(
+                       padding: EdgeInsets.only(left: 75,right: 15),
                        child: Text(snapshot.data[index].data["Description"],style: TextStyle(fontSize: 16),),
+                     ),
                      ),
                      Padding(
                        padding: EdgeInsets.only(left: 75,top: 15,bottom: 8),

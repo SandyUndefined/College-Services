@@ -169,17 +169,32 @@ class _UploadState extends State<Upload> {
       children: <Widget>[
         Padding(
           padding: EdgeInsets.only(left: 25,top: 30),
-          child: CircleAvatar(
-            radius: 35,
-            backgroundColor: Colors.transparent,
-            child: ClipOval(
-              child: Center(
-                child: (UserImageUrl!=null)?Image.network(UserImageUrl,fit: BoxFit.contain,):
-                Icon(
-                  Icons.person,
-                  color: Colors.grey.shade700,
+          child: /*Container(
+            width: 45,
+            height: 45,
+            child: CircleAvatar(
+              radius: 35,
+              backgroundColor: Colors.transparent,
+              child: ClipOval(
+                child: Center(
+                  child: (UserImageUrl!=null)?Image.network(UserImageUrl,fit: BoxFit.contain,):
+                  Icon(
+                    Icons.person,
+                    color: Colors.grey.shade700,
+                  ),
                 ),
               ),
+            ),
+          ),*/
+          Container(
+            width: 65,
+            height: 65,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(UserImageUrl),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(50.5)),
             ),
           ),
         ),
@@ -199,6 +214,7 @@ class _UploadState extends State<Upload> {
     return Container(
       padding: EdgeInsets.only(left: 28,right: 28,),
       child:TextField(
+        textCapitalization: TextCapitalization.sentences,
         controller: _desController,
       keyboardType: TextInputType.multiline,
         textInputAction: TextInputAction.done,

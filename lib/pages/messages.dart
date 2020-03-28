@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:college_services/services/usermanagement.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'Chat.dart';
 
@@ -12,7 +13,7 @@ class Messages extends StatefulWidget {
 class _MessagesState extends State<Messages> {
   bool userFlag = false;
   var users;
-  String PhoneNumber;
+  String PhoneNumber,peerId,UserId;
 
   @override
   void initState() {
@@ -22,8 +23,10 @@ class _MessagesState extends State<Messages> {
         userFlag = true;
         users = results;
         PhoneNumber = users['Phone Number'];
+        UserId = users['User ID'];
       });
     });
+
   }
   @override
   Widget build(BuildContext context) {
@@ -35,7 +38,7 @@ class _MessagesState extends State<Messages> {
         children:<Widget>[
           Container(
             child: StreamBuilder(
-              stream: Firestore.instance.collection('users').snapshots(),
+              stream: Firestore.instance.collection('users').orderBy("Name", descending: false).snapshots(),
               builder: (context,snapshot){
                 if(!snapshot.hasData){
                   return Center(
@@ -43,11 +46,11 @@ class _MessagesState extends State<Messages> {
                   );
                 }
                 else{
-                  return ListView.builder(
-                    padding: EdgeInsets.all(8.0),
-                    itemBuilder: (context,index) => buildItem(context,snapshot.data.documents[index]),
-                    itemCount: snapshot.data.documents.length,
-                  );
+                      return ListView.builder(
+                        padding: EdgeInsets.all(8.0),
+                        itemBuilder: (context,index) => buildItem(context,snapshot.data.documents[index]),
+                        itemCount: snapshot.data.documents.length,
+                      );
                 }
               },
             ),
@@ -58,7 +61,7 @@ class _MessagesState extends State<Messages> {
   }
 
   Widget buildItem(BuildContext context,DocumentSnapshot document){
-    if(document['Phone Number'] == PhoneNumber){
+    if(document['User ID'] == UserId){
       print("NO $PhoneNumber");
       return Container();
     }
@@ -74,17 +77,19 @@ class _MessagesState extends State<Messages> {
               InkWell(
                 child: new Row(
                   children: <Widget>[
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: NetworkImage(document["Image Url"]),
-                          fit: BoxFit.cover,
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(document["Image Url"]),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(50.5)),
+                          ),
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(50.5)),
-                      ),
-                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -92,22 +97,11 @@ class _MessagesState extends State<Messages> {
                           padding:  EdgeInsets.only(left:15),
                           child: Text(document["Name"],style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 25,top: 5),
-                          child: Text("Send your first message",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w800,color: Colors.blueAccent),),
-                        ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left:17.0),
-                      child: Text("09:34 PM",
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87
-                        ),
-                      ),
+                      ],
                     ),
+                    /*Spacer(),*/
                   ],
                 ),
                 onTap:()  {

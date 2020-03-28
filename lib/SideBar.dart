@@ -69,17 +69,15 @@ class _SideBarState extends State<SideBar> {
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(left: 15,top: 40),
-            child: CircleAvatar(
-              radius: 35,
-              backgroundColor: Colors.transparent,
-              child: ClipOval(
-                child: Center(
-                  child: (UserImageUrl!=null)?Image.network(UserImageUrl,fit: BoxFit.contain,):
-                  Icon(
-                    Icons.person,
-                    color: Colors.grey.shade700,
-                  ),
+            child: Container(
+              width: 65,
+              height: 65,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(UserImageUrl),
+                  fit: BoxFit.cover,
                 ),
+                borderRadius: BorderRadius.all(Radius.circular(50.5)),
               ),
             ),
           ),

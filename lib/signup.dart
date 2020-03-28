@@ -246,6 +246,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         onEditingComplete: (){
          FocusScope.of(context).requestFocus(_focusphn);
         },
@@ -282,6 +283,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         focusNode: _focusphn,
         onEditingComplete: (){
           FocusScope.of(context).requestFocus(_focusemail);
@@ -319,6 +321,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         focusNode: _focusemail,
         onEditingComplete: (){
           FocusScope.of(context).requestFocus(_focuspsswd);
@@ -358,6 +361,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         focusNode: _focuspsswd,
         onEditingComplete: (){
           FocusScope.of(context).requestFocus(_focusconfpsswd);
@@ -396,6 +400,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         focusNode: _focusconfpsswd,
         onEditingComplete: (){
           FocusScope.of(context).requestFocus(_focusroll);
@@ -434,6 +439,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         focusNode: _focusroll,
         onEditingComplete: (){
           FocusScope.of(context).requestFocus(_focuscourse);
@@ -471,6 +477,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
        /* onChanged: (value){
           this.phoneNumber = value;
           print(this.phoneNumber);
@@ -502,6 +509,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
       child: TextFormField(
+        textCapitalization: TextCapitalization.sentences,
         focusNode: _focuscourse,
         onEditingComplete: (){
           FocusScope.of(context).requestFocus(_focussem);
@@ -539,6 +547,7 @@ class _SignUpScreenState extends State<SignUpScreen>{
     return Material(
       borderRadius: BorderRadius.circular(22.0),
      child:TextFormField(
+       textCapitalization: TextCapitalization.sentences,
        focusNode: _focussem,
        onEditingComplete: (){
          FocusScope.of(context).requestFocus(new FocusNode());
