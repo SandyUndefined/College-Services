@@ -92,25 +92,22 @@ class _DetailPageState extends State<DetailPage> {
                 Divider(),
                 new Row(
                   children: <Widget>[
-                    Padding(
-                      padding:EdgeInsets.only(left: 5),
-                      child: IconButton(
+                    Expanded(
+                    child: IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.favorite_border,
                             color: Colors.redAccent, size: 23.0),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 65),
-                      child:IconButton(
+                    Expanded(
+                      child: IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.chat_bubble_outline,
                           color: Colors.blue,size: 23.0,),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 75),
-                      child:IconButton(
+                    Expanded(
+                    child:IconButton(
                         onPressed: () {},
                         icon: Icon(Icons.near_me,
                           color: Colors.blue,size: 23.0,),
@@ -136,6 +133,7 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage> {
 
   Future _data;
+  bool isPressed = false;
 
   @override
   void initState() {
@@ -149,6 +147,8 @@ class _ListPageState extends State<ListPage> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Container(
       child: FutureBuilder(
         future: _data,
@@ -207,25 +207,28 @@ class _ListPageState extends State<ListPage> {
                      Divider(),
                      new Row(
                        children: <Widget>[
-                         Padding(
-                           padding:EdgeInsets.only(left: 5),
+                         Expanded(
                            child: IconButton(
-                             onPressed: () {},
-                             icon: Icon(Icons.favorite_border,
-                                 color: Colors.redAccent, size: 23.0),
+                             onPressed: () {
+                               updateLikes('${snapshot.data[index].data["Postid"]}');
+                               print(snapshot.data[index]);
+                               print(snapshot.data[index].data["Like"] );
+                             },
+                             icon: snapshot.data[index].data["Like"] ? Icon(Icons.favorite,
+                                 color: Colors.redAccent, size: 23.0) :
+                                 Icon(Icons.favorite_border,
+                                 color: Colors.redAccent, size: 23.0)
                            ),
                          ),
-                         Padding(
-                           padding: EdgeInsets.only(left: 65),
-                            child:IconButton(
+                         Expanded(
+                         child:IconButton(
                               onPressed: () {},
                               icon: Icon(Icons.chat_bubble_outline,
                               color: Colors.blue,size: 23.0,),
                             ),
                          ),
-                         Padding(
-                           padding: EdgeInsets.only(left: 75),
-                           child:IconButton(
+                         Expanded(
+                           child: IconButton(
                              onPressed: () {},
                              icon: Icon(Icons.near_me,
                                color: Colors.blue,size: 23.0,),
@@ -242,6 +245,16 @@ class _ListPageState extends State<ListPage> {
          }
       }),
     );
+  }
+  updateLikes(String s) async{
+    print(s);
+    await Firestore.instance
+        .collection('Posts')
+        .document('$s')
+        .updateData({
+      'Like': true,
+    });
+
   }
 }
 

@@ -4,6 +4,7 @@ import 'package:college_services/SignUpComplete.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
 class UserManagement {
@@ -60,15 +61,21 @@ class UserManagement {
   }
 
   addPost(Name, Des, UserImageUrl, ImageUrl, PhoneNumber, context) async {
+    var uuid = new Uuid();
+    String PostID;
+    bool isliked = false;
+    PostID = uuid.v1();
     var date = new DateTime.now();
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
-    Firestore.instance.collection('/Posts').document('$Name : $date',).setData({
+    Firestore.instance.collection('/Posts').document('$PostID',).setData({
       'Creation Time': date,
+      'Postid':PostID,
       'Name': Name,
       'Userid': userId,
       'User Pic': UserImageUrl,
       'Image Urls': ImageUrl,
       'Description': Des,
+      'Like': isliked,
     }).then((value) {
       Navigator.of(context).pop();
       Navigator.pushReplacement(

@@ -1,5 +1,6 @@
 import 'package:college_services/Home.dart';
 import 'package:college_services/login.dart';
+import 'package:college_services/pages/Friends.dart';
 import 'package:college_services/pages/profile.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -98,7 +99,9 @@ class _SideBarState extends State<SideBar> {
           profile(),
           SizedBox(height: 20,),
           friends(),
-                SizedBox(height: 20,),
+              SizedBox(height: 20,),
+          myPosts(),
+              SizedBox(height: 20,),
           Divider(),
                 SizedBox(height: 20,),
           notice(),
@@ -161,7 +164,30 @@ class _SideBarState extends State<SideBar> {
       ],
       ),
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => new HomePage()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => new Friends()));
+      },
+    );
+  }
+  Widget myPosts(){
+    return InkWell(
+      child:Row(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 20,),
+            child: Icon(
+              Icons.art_track,
+              color: Colors.black87,
+              size: 25.0,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: _width/14),
+            child: Text("My Posts",style:TextStyle(fontWeight: FontWeight.w600,fontSize: 14),),
+          ),
+        ],
+      ),
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => new Friends()));
       },
     );
   }

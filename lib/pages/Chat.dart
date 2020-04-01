@@ -169,14 +169,13 @@ class ChatScreenState extends State<ChatScreen> {
                   child: Text(
                     document['Content'],
                     style: TextStyle(color: Color(0xff203152),fontSize: 16),
-                  ),
+                  ) ,
                 ),
               ),
             ],
             ),
         ],
       );
-      // Left (peer message)
   }
 
   @override
@@ -201,7 +200,7 @@ class ChatScreenState extends State<ChatScreen> {
     return Container(
       child: Row(
         children: <Widget>[
-          Flexible(
+          Expanded(
             child: Container(
               width: double.infinity,
               height: 50.0,
@@ -214,7 +213,7 @@ class ChatScreenState extends State<ChatScreen> {
                 ), // set rounded corner radius
               ),
                  child: Padding(
-                   padding: EdgeInsets.only(left:17.0),
+                   padding: EdgeInsets.only(left:17.0,right: 10),
                    child: TextFormField(
                      textCapitalization: TextCapitalization.sentences,
                      validator: (String input){
@@ -235,6 +234,8 @@ class ChatScreenState extends State<ChatScreen> {
                      style: TextStyle(color: Colors.black, fontSize: 16.0),
                      controller: textEditingController,
                      decoration: InputDecoration(
+                       isDense: true,
+                       contentPadding: EdgeInsets.all(10),
                        border: InputBorder.none,
                        hintText: 'Type your message...',
                        hintStyle: TextStyle(color: Colors.grey),
