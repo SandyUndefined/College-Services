@@ -94,6 +94,23 @@ class UserManagement {
     return Qn.documents;
   }
 
+  getmyPosts(userID)async{
+    print('This is in Usermanagement $userID');
+    String userId = (await FirebaseAuth.instance.currentUser()).uid;
+    print('Current user $userId');
+    if (userID != null) {
+      QuerySnapshot Qn = await Firestore.instance.collection("Posts").where("Userid", isEqualTo: userID).orderBy(
+          "Creation Time", descending: true).getDocuments();
+      return Qn.documents;
+    }
+    else {
+      QuerySnapshot Qn = await Firestore.instance.collection("Posts").where("Userid", isEqualTo: userId).orderBy(
+          "Creation Time", descending: true).getDocuments();
+      return Qn.documents;
+    }
+
+  }
+
 
   storeMessages(UserID, peerId, content) async {
     List<DocumentSnapshot> templist;

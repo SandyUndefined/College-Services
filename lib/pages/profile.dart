@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:college_services/pages/Myposts.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -248,6 +249,55 @@ class _ProfileState extends State<Profile> {
                             Padding(
                               padding: const EdgeInsets.only(top:15.0,left: 5.0),
                               child: Text(Semester,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 4,),
+                new Card(
+                  child: new Container(
+                    width: 360,
+                    height: 85,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left:15.0),
+                          child: Icon(
+                            Icons.art_track,
+                            color: Colors.blueAccent,
+                            size: 20.0,
+                          ),
+                        ),
+                        VerticalDivider(thickness: 2.0,),
+                        new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top:15.0,left: 5.0),
+                              child: Text("Posts",style: TextStyle(fontSize: 16,color: Colors.grey),),
+                            ),
+                            RaisedButton(
+                              shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(18.0),),
+                              color: Color.fromRGBO(0,21,43,1),
+                              textColor: Colors.white,
+                              /*padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),*/
+                              child: Container(
+                                alignment: Alignment.center,
+                                /*width: 50,*/
+                                child: Text(
+                                  "View Posts",
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                print('This is in profile screen $userID');
+                                Navigator.push(context, MaterialPageRoute( builder:(context) => MyPosts(uid: userID,)));
+                              },
                             ),
                           ],
                         ),

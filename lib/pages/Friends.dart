@@ -36,30 +36,22 @@ class _FriendsState extends State<Friends> {
       ),
       body: Stack(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.only(left:25.0,top: 15.0,bottom: 10.0),
-              child: Text(
-                "All Users",style: TextStyle(fontSize: 18,fontWeight: FontWeight.w700),
-              ),
-            ),
-        Container(
-          child: StreamBuilder(
-            stream: Firestore.instance.collection('users').orderBy("Name", descending: false).snapshots(),
-            builder: (context,snapshot){
-              if(!snapshot.hasData){
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              else{
-                return ListView.builder(
-                  padding: EdgeInsets.only(left:8.0,top:35,right: 8.0,bottom: 15.0),
-                  itemBuilder: (context,index) => buildItem(context,snapshot.data.documents[index]),
-                  itemCount: snapshot.data.documents.length,
-                );
-              }
-            },
-          ),
+        StreamBuilder(
+          stream: Firestore.instance.collection('users').orderBy("Name", descending: false).snapshots(),
+          builder: (context,snapshot){
+            if(!snapshot.hasData){
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            else{
+              return ListView.builder(
+                padding: EdgeInsets.only(left:8.0,top:25,right: 8.0,bottom: 15.0),
+                itemBuilder: (context,index) => buildItem(context,snapshot.data.documents[index]),
+                itemCount: snapshot.data.documents.length,
+              );
+            }
+          },
         ),
           ],
       ),
@@ -74,50 +66,48 @@ class _FriendsState extends State<Friends> {
     else{
       print("yess!");
       return userFlag ? Container(
-        child: Padding(
-          padding: EdgeInsets.only(top: 15,left: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              InkWell(
-                child: new Row(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(document["Image Url"]),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(50.5)),
+        margin: EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            InkWell(
+              child: new Row(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(document["Image Url"]),
+                            fit: BoxFit.cover,
                           ),
+                          borderRadius: BorderRadius.all(Radius.circular(50.5)),
                         ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding:  EdgeInsets.only(left:15),
-                              child: Text(document["Name"],style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    /*Spacer(),*/
-                  ],
-                ),
-                onTap:()  {
-                  Navigator.push(context, MaterialPageRoute( builder:(context) => Profile(userID: document.documentID,)
-                    ,)
-                  );
-                },
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Padding(
+                            padding:  EdgeInsets.only(left:15),
+                            child: Text(document["Name"],style: TextStyle(fontWeight: FontWeight.w600,fontSize: 16),),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  /*Spacer(),*/
+                ],
               ),
-            ],
-          ),
+              onTap:()  {
+                Navigator.push(context, MaterialPageRoute( builder:(context) => Profile(userID: document.documentID,)
+                  ,)
+                );
+              },
+            ),
+          ],
         ),
       )
           : new Container();
