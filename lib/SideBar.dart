@@ -222,7 +222,7 @@ class _SideBarState extends State<SideBar> {
       ],
       ),
       onTap: (){
-        print('Botice is not working for now');
+        print('Notice is not working for now');
         /*Navigator.push(context, MaterialPageRoute(builder: (context) => new HomePage()));*/
       },
     );
@@ -340,7 +340,7 @@ class _SideBarState extends State<SideBar> {
       ],
       ),
       onTap: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => new Setting()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => new Setting(uid:UserID)));
       },
     );
   }

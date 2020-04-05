@@ -48,10 +48,10 @@ class UserManagement {
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     print('Current user $userId');
     if (userID != null) {
-      return Firestore.instance.collection('users').document(userID).get();
+      return await Firestore.instance.collection('users').document(userID).get();
     }
     else {
-      return Firestore.instance.collection('users').document(userId).get();
+      return await Firestore.instance.collection('users').document(userId).get();
     }
   }
 
@@ -149,6 +149,16 @@ class UserManagement {
           .now()
           .millisecondsSinceEpoch
           .toString(),
+    });
+  }
+
+  updateShowPassword(Id,value) async{
+    await Firestore
+        .instance
+        .collection('users')
+        .document(Id)
+        .updateData({
+      'Show Password' : value
     });
   }
 }

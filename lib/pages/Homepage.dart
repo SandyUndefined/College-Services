@@ -47,75 +47,123 @@ class _DetailPageState extends State<DetailPage> {
         title: Text(widget.post.data["Name"],
         ),
       ),
-      body: Container(
-        child: Card(
-          elevation: 4,
-          child:Padding(
-            padding: EdgeInsets.only(left:10.0,top: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                new Row(
-                  children: <Widget>[
-                    InkWell(
-                      onTap: () => navigateToProfile(),
-                      child: Container(
-                        width: 45,
-                        height: 45,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(widget.post.data["User Pic"]),
-                            fit: BoxFit.cover,
+      body: SingleChildScrollView(
+        child: Container(
+          child: Card(
+            elevation: 4,
+            child:Padding(
+              padding: EdgeInsets.all(15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  new Row(
+                    children: <Widget>[
+                      InkWell(
+                        onTap: () => navigateToProfile(),
+                        child: Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: NetworkImage(widget.post.data["User Pic"]),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(50.5)),
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(50.5)),
                         ),
                       ),
-                    ),
-                    Flexible(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 25,right: 15),
-                        child: Text(widget.post.data["Description"],style: TextStyle(fontSize: 16),),
+                      Flexible(
+                        child: Padding(
+                          padding: EdgeInsets.only(left: 25,right: 15),
+                          child: Text(widget.post.data["Description"],style: TextStyle(fontSize: 16),),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 75,top: 5),
-                  child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(widget.post.data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),
+                    ],
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(left: 75,top: 35,bottom: 8),
-                  child: Text(widget.post.data.length.toString()+"Files uploaded",style: TextStyle(color: Colors.blueAccent,fontSize: 14,fontStyle: FontStyle.italic),),
-                ),
-                Divider(),
-                new Row(
-                  children: <Widget>[
-                    Expanded(
-                    child: IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.favorite_border,
-                            color: Colors.redAccent, size: 23.0),
-                      ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 75,top: 5),
+                    child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(widget.post.data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),
                     ),
-                    Expanded(
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 75,top: 35,bottom: 8),
+                    child: Text(widget.post.data.length.toString()+"Files uploaded",style: TextStyle(color: Colors.blueAccent,fontSize: 14,fontStyle: FontStyle.italic),),
+                  ),
+                  Divider(),
+                  new Row(
+                    children: <Widget>[
+                      Expanded(
                       child: IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.chat_bubble_outline,
-                          color: Colors.blue,size: 23.0,),
+                          onPressed: () {},
+                          icon: Icon(Icons.favorite_border,
+                              color: Colors.redAccent, size: 23.0),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                    child:IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.near_me,
-                          color: Colors.blue,size: 23.0,),
+                      Expanded(
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.chat_bubble,
+                            color: Colors.blue,size: 23.0,),
+                        ),
+
                       ),
+                      Expanded(
+                      child:IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.near_me,
+                            color: Colors.blue,size: 23.0,),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30,),
+                  Container(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          child: TextFormField(
+                            textCapitalization: TextCapitalization.sentences,
+                            onEditingComplete: (){
+                              FocusScope.of(context).requestFocus(new FocusNode());
+                            },
+                            obscureText: false,
+                            keyboardType: TextInputType.text,
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
+                            decoration: InputDecoration(
+                              suffixIcon: Icon(Icons.near_me),
+                              labelText: "Add comments",
+                              alignLabelWithHint: true,
+                              labelStyle: TextStyle(
+                                color: Colors.black,
+                              ),
+                              fillColor: Color.fromRGBO(241, 243, 243, 1),
+                              filled: true,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0)
+                              ),
+                            ),
+                            onChanged: (value){
+                            },
+                          ),
+                        ),
+                        SizedBox(height: 30,),
+                        Center(
+                            child: Text(
+                                "Wow, such empty",
+                              style: TextStyle(
+                                color: Colors.black26
+                              ),
+                            ),
+                        ),
+                        SizedBox(height: 30,),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

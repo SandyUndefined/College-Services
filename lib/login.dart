@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:college_services/services/responsive.dart';
 import 'package:college_services/signup.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'Home.dart';
 import 'package:progress_dialog/progress_dialog.dart';

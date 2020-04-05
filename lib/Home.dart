@@ -4,11 +4,9 @@ import 'package:college_services/SideBar.dart';
 import 'package:college_services/pages/upload.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'login.dart';
 import 'package:college_services/pages/Homepage.dart';
 import 'package:college_services/pages/messages.dart';
 import 'package:college_services/pages/notification.dart';
-import 'package:college_services/pages/profile.dart';
 
 class HomePage extends StatefulWidget {
  _HomePageState createState() => _HomePageState();

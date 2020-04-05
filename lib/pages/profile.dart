@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:college_services/pages/Chat.dart';
 import 'package:college_services/pages/Myposts.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,7 @@ class Profile extends StatefulWidget {
 
 
 class _ProfileState extends State<Profile> {
-  bool userFlag = false;
+  bool userFlag = false,showphn=false;
   var users;
   String userID,Name,Email,PhoneNumber,Image,RollNumber,College,Course,Semester;
   @override
@@ -33,6 +34,8 @@ class _ProfileState extends State<Profile> {
       College = users['College'];
       Course = users['Course'];
       Semester = users['Semester'];
+      showphn = users['Show Password'];
+      print('This is show phoneNumber $showphn');
     });
     });
   }
@@ -116,7 +119,9 @@ class _ProfileState extends State<Profile> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top:15.0,left: 5.0),
-                              child: Text(PhoneNumber,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+                              child: showphn != true ? Text("XXXXXXXXXX",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),)
+                                  :
+                              Text(PhoneNumber,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),)
                             ),
                           ],
                         ),
@@ -297,6 +302,55 @@ class _ProfileState extends State<Profile> {
                               onPressed: () {
                                 print('This is in profile screen $userID');
                                 Navigator.push(context, MaterialPageRoute( builder:(context) => MyPosts(uid: userID,)));
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: 4,),
+                new Card(
+                  child: new Container(
+                    width: 360,
+                    height: 85,
+                    child: Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(left:15.0),
+                          child: Icon(
+                            Icons.library_books,
+                            color: Colors.blueAccent,
+                            size: 20.0,
+                          ),
+                        ),
+                        VerticalDivider(thickness: 2.0,),
+                        new Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top:15.0,left: 5.0),
+                              child: Text("Send Message",style: TextStyle(fontSize: 16,color: Colors.grey),),
+                            ),
+                            RaisedButton(
+                              shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(18.0),),
+                              color: Color.fromRGBO(0,21,43,1),
+                              textColor: Colors.white,
+                              /*padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),*/
+                              child: Container(
+                                alignment: Alignment.center,
+                                /*width: 50,*/
+                                child: Text(
+                                  "Send Message",
+                                  style: TextStyle(
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                              ),
+                              onPressed: () {
+                                print('This is in profile screen $userID');
+                                Navigator.push(context, MaterialPageRoute( builder:(context) => Chat(peerId: userID,peerName: Name,peerAvatar: Image,)));
                               },
                             ),
                           ],
