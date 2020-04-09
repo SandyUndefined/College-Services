@@ -1,9 +1,9 @@
 import 'package:college_services/pages/profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-
 
 class Home extends StatefulWidget {
   @override
@@ -25,8 +25,9 @@ class _HomeState extends State<Home> {
 class DetailPage extends StatefulWidget {
   final DocumentSnapshot post;
   final String uid;
-  
-  DetailPage({this.post,this.uid});
+
+  DetailPage({this.post, this.uid});
+
   @override
   _DetailPageState createState() => _DetailPageState();
 }
@@ -34,24 +35,30 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   String userID;
 
-  navigateToProfile(){
+  navigateToProfile() {
     print(widget.uid);
     userID = widget.uid;
-    Navigator.push(context, MaterialPageRoute( builder:(context) => Profile(userID: userID,)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => Profile(
+                  userID: userID,
+                )));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.post.data["Name"],
+        title: Text(
+          widget.post.data["Name"],
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
           child: Card(
             elevation: 4,
-            child:Padding(
+            child: Padding(
               padding: EdgeInsets.all(15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,32 +76,47 @@ class _DetailPageState extends State<DetailPage> {
                               image: NetworkImage(widget.post.data["User Pic"]),
                               fit: BoxFit.cover,
                             ),
-                            borderRadius: BorderRadius.all(Radius.circular(50.5)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(50.5)),
                           ),
                         ),
                       ),
                       Flexible(
                         child: Padding(
-                          padding: EdgeInsets.only(left: 25,right: 15),
-                          child: Text(widget.post.data["Description"],style: TextStyle(fontSize: 16),),
+                          padding: EdgeInsets.only(left: 25, right: 15),
+                          child: Text(
+                            widget.post.data["Description"],
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
                       ),
                     ],
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 75,top: 5),
-                    child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(widget.post.data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),
+                    padding: EdgeInsets.only(left: 75, top: 5),
+                    child: Text(
+                      DateFormat.yMMMd().add_jm().format(DateTime.parse(widget
+                          .post.data["Creation Time"]
+                          .toDate()
+                          .toString())),
+                      style: TextStyle(color: Colors.black38, fontSize: 12),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 75,top: 35,bottom: 8),
-                    child: Text(widget.post.data.length.toString()+"Files uploaded",style: TextStyle(color: Colors.blueAccent,fontSize: 14,fontStyle: FontStyle.italic),),
+                    padding: EdgeInsets.only(left: 75, top: 35, bottom: 8),
+                    child: Text(
+                      widget.post.data.length.toString() + "Files uploaded",
+                      style: TextStyle(
+                          color: Colors.blueAccent,
+                          fontSize: 14,
+                          fontStyle: FontStyle.italic),
+                    ),
                   ),
                   Divider(),
                   new Row(
                     children: <Widget>[
                       Expanded(
-                      child: IconButton(
+                        child: IconButton(
                           onPressed: () {},
                           icon: Icon(Icons.favorite_border,
                               color: Colors.redAccent, size: 23.0),
@@ -103,29 +125,37 @@ class _DetailPageState extends State<DetailPage> {
                       Expanded(
                         child: IconButton(
                           onPressed: () {},
-                          icon: Icon(Icons.chat_bubble,
-                            color: Colors.blue,size: 23.0,),
+                          icon: Icon(
+                            Icons.chat_bubble,
+                            color: Colors.blue,
+                            size: 23.0,
+                          ),
                         ),
-
                       ),
                       Expanded(
-                      child:IconButton(
+                        child: IconButton(
                           onPressed: () {},
-                          icon: Icon(Icons.near_me,
-                            color: Colors.blue,size: 23.0,),
+                          icon: Icon(
+                            Icons.near_me,
+                            color: Colors.blue,
+                            size: 23.0,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 30,),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Container(
                     child: Column(
                       children: <Widget>[
                         Container(
                           child: TextFormField(
                             textCapitalization: TextCapitalization.sentences,
-                            onEditingComplete: (){
-                              FocusScope.of(context).requestFocus(new FocusNode());
+                            onEditingComplete: () {
+                              FocusScope.of(context)
+                                  .requestFocus(new FocusNode());
                             },
                             obscureText: false,
                             keyboardType: TextInputType.text,
@@ -142,23 +172,23 @@ class _DetailPageState extends State<DetailPage> {
                               fillColor: Color.fromRGBO(241, 243, 243, 1),
                               filled: true,
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30.0)
-                              ),
+                                  borderRadius: BorderRadius.circular(30.0)),
                             ),
-                            onChanged: (value){
-                            },
+                            onChanged: (value) {},
                           ),
                         ),
-                        SizedBox(height: 30,),
-                        Center(
-                            child: Text(
-                                "Wow, such empty",
-                              style: TextStyle(
-                                color: Colors.black26
-                              ),
-                            ),
+                        SizedBox(
+                          height: 30,
                         ),
-                        SizedBox(height: 30,),
+                        Center(
+                          child: Text(
+                            "Wow, such empty",
+                            style: TextStyle(color: Colors.black26),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
                       ],
                     ),
                   ),
@@ -172,136 +202,157 @@ class _DetailPageState extends State<DetailPage> {
   }
 }
 
-
 class ListPage extends StatefulWidget {
   @override
   _ListPageState createState() => _ListPageState();
 }
 
 class _ListPageState extends State<ListPage> {
-
-  Future _data;
   bool isPressed = false;
+  String Likes;
 
-  @override
-  void initState() {
-    super.initState();
-    _data = UserManagement().getPosts();
-  }
-
-  navigateToDetail(DocumentSnapshot post,String uid){
-    Navigator.push(context, MaterialPageRoute( builder:(context) => DetailPage(post: post,uid: uid,)));
+  navigateToDetail(DocumentSnapshot post, String uid) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => DetailPage(
+                  post: post,
+                  uid: uid,
+                )));
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: FutureBuilder(
-        future: _data,
-          builder: (_,snapshot){
-       if(snapshot.connectionState == ConnectionState.waiting){
-        return Center(child: CircularProgressIndicator(),);
-       }
-       else
-         {
-           return ListView.builder(itemCount:snapshot.data.length,
-               itemBuilder: (_,index){
-                 return Card(
-               elevation: 4,
-               child:Padding(
-                 padding: EdgeInsets.only(left:10.0,top: 10),
-               child: InkWell(
-                 onTap: () => navigateToDetail(snapshot.data[index],snapshot.data[index].data["Userid"],),
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   mainAxisSize: MainAxisSize.min,
-                   children: <Widget>[
-                     new Row(
-                       children: <Widget>[
-                         Container(
-                           width: 45,
-                           height: 45,
-                   decoration: BoxDecoration(
-                             image: DecorationImage(
-                               image: NetworkImage(snapshot.data[index].data["User Pic"]),
-                                fit: BoxFit.cover,
-                             ),
-                             borderRadius: BorderRadius.all(Radius.circular(50.5)),
-                           ),
-                         ),
-                         Padding(
-                           padding:  EdgeInsets.only(left:15),
-                           child: Text(snapshot.data[index].data["Name"],style: TextStyle(fontWeight: FontWeight.w600,fontSize: 18),),
-                         ),
-                         ],
-                     ),
-                     Padding(
-                       padding: EdgeInsets.only(left: 60,bottom: 10),
-                       child: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(snapshot.data[index].data["Creation Time"].toDate().toString())),style: TextStyle(color: Colors.black38,fontSize: 12),),
-
-                     ),
-                     Flexible(
-                     child:Padding(
-                       padding: EdgeInsets.only(left: 75,right: 15),
-                       child: Text(snapshot.data[index].data["Description"],style: TextStyle(fontSize: 16),),
-                     ),
-                     ),
-                     Padding(
-                       padding: EdgeInsets.only(left: 75,top: 15,bottom: 8),
-                       child: Text(snapshot.data.length.toString()+"Files uploaded",style: TextStyle(color: Colors.blueAccent,fontSize: 14,fontStyle: FontStyle.italic),),
-                     ),
-                     Divider(),
-                     new Row(
-                       children: <Widget>[
-                         Expanded(
-                           child: IconButton(
-                             onPressed: () {
-                               updateLikes('${snapshot.data[index].data["Postid"]}');
-                               print(snapshot.data[index]);
-                               print(snapshot.data[index].data["Like"] );
-                             },
-                             icon: snapshot.data[index].data["Like"] ? Icon(Icons.favorite,
-                                 color: Colors.redAccent, size: 23.0) :
-                                 Icon(Icons.favorite_border,
-                                 color: Colors.redAccent, size: 23.0)
-                           ),
-                         ),
-                         Expanded(
-                         child:IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.chat_bubble_outline,
-                              color: Colors.blue,size: 23.0,),
-                            ),
-                         ),
-                         Expanded(
-                           child: IconButton(
-                             onPressed: () {},
-                             icon: Icon(Icons.near_me,
-                               color: Colors.blue,size: 23.0,),
-                           ),
-                         ),
-                       ],
-                     ),
-                   ],
-                 ),
-               ),
-               ),
-             );
-           });
-         }
-      }),
+      child: StreamBuilder<QuerySnapshot>(
+          stream: UserManagement().getPostsStream(),
+          builder: (_, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              final List<DocumentSnapshot> documents = snapshot.data.documents;
+              return ListView.builder(
+                  itemCount: documents.length,
+                  itemBuilder: (_, index) {
+                    return Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10.0, top: 10),
+                        child: InkWell(
+                          onTap: () => navigateToDetail(
+                            documents[index],
+                            documents[index].data["Userid"],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: 45,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                            documents[index].data["User Pic"]),
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(50.5)),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 15),
+                                    child: Text(
+                                      documents[index].data["Name"],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 18),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 60, bottom: 10),
+                                child: Text(
+                                  DateFormat.yMMMd().add_jm().format(
+                                      DateTime.parse(documents[index]
+                                          .data["Creation Time"]
+                                          .toDate()
+                                          .toString())),
+                                  style: TextStyle(
+                                      color: Colors.black38, fontSize: 12),
+                                ),
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: EdgeInsets.only(left: 75, right: 15),
+                                  child: Text(
+                                    documents[index].data["Description"],
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    left: 75, top: 15, bottom: 8),
+                                child: Text(
+                                  documents.length.toString() +
+                                      "Files uploaded",
+                                  style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                              Divider(),
+                              new Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: IconButton(
+                                      onPressed: (){
+                                      },
+                                      icon: Icon(Icons.favorite_border,
+                                          color: Colors.redAccent,
+                                          size: 23.0),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: IconButton(
+                                      onPressed: () {
+                                        navigateToDetail(documents[index],
+                                          documents[index].data["Userid"],);
+                                      },
+                                      icon: Icon(
+                                        Icons.chat_bubble_outline,
+                                        color: Colors.blue,
+                                        size: 23.0,
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.near_me,
+                                        color: Colors.blue,
+                                        size: 23.0,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  });
+            }
+          }),
     );
   }
-  updateLikes(String s) async{
-    print(s);
-    await Firestore.instance
-        .collection('Posts')
-        .document('$s')
-        .updateData({
-      'Like': true,
-    });
-
-  }
 }
-
-
