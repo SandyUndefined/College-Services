@@ -208,8 +208,11 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
-  bool isPressed = false;
+
+  bool isLiked = false;
+  var liked;
   String Likes;
+  String usersId;
 
   navigateToDetail(DocumentSnapshot post, String uid) {
     Navigator.push(
@@ -220,7 +223,19 @@ class _ListPageState extends State<ListPage> {
                   uid: uid,
                 )));
   }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getCurrentusers();
+  }
 
+  getCurrentusers() async {
+    String id = usersId = (await FirebaseAuth.instance.currentUser()).uid;
+    setState((){
+      usersId = id;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -312,12 +327,30 @@ class _ListPageState extends State<ListPage> {
                               new Row(
                                 children: <Widget>[
                                   Expanded(
-                                    child: IconButton(
-                                      onPressed: (){
-                                      },
-                                      icon: Icon(Icons.favorite_border,
-                                          color: Colors.redAccent,
-                                          size: 23.0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        IconButton(
+                                          onPressed: () async {
+                                            final QuerySnapshot result = await Firestore.instance.collection('Posts').where('$usersId',isEqualTo: true).getDocuments();
+                                            final List <DocumentSnapshot> documentss = result.documents;
+                                            if(documentss.length == 0 ){
+                                            await UserManagement().updateLikes(documents[index].data['Postid']);
+                                            print("Liked");
+                                            print(documents[index].data['$usersId']);
+                                            }
+                                            else{
+                                              await UserManagement().updateDislike(documents[index].data['Postid']);
+                                              print("already liked $isLiked");
+                                            }
+                                          },
+                                          icon: documents[index].data['$usersId'] == true ?  Icon(Icons.favorite,
+                                              color: Colors.redAccent,
+                                              size: 23.0) :  Icon(Icons.favorite_border,
+                                              color: Colors.redAccent,
+                                              size: 23.0)
+                                        ),
+                                        /*Text(documents[index].data['Likes'].length.toString()),*/
+                                      ],
                                     ),
                                   ),
                                   Expanded(

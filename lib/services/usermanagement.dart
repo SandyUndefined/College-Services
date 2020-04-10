@@ -71,6 +71,9 @@ class UserManagement {
       'Postid':PostID,
       'Name': Name,
       'Userid': userId,
+      'Likes': {
+         '$userId':false,
+      },
       'User Pic': UserImageUrl,
       'Image Urls': ImageUrl,
       'Description': Des,
@@ -157,6 +160,18 @@ class UserManagement {
         .document(Id)
         .updateData({
       'Show Password' : value
+    });
+  }
+  updateLikes(Postid)async{
+    String userId = (await FirebaseAuth.instance.currentUser()).uid;
+    await Firestore.instance.collection('Posts').document('$Postid').updateData({
+          'Likes.$userId': true,
+    });
+  }
+  updateDislike(Postid) async{
+    String userId = (await FirebaseAuth.instance.currentUser()).uid;
+    await Firestore.instance.collection('Posts').document('$Postid').updateData({
+      'Likes.$userId': false,
     });
   }
 }
