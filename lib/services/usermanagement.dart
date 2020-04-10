@@ -72,7 +72,10 @@ class UserManagement {
       'Name': Name,
       'Userid': userId,
       'Likes': {
-         '$userId':false,
+          'Like Count': 0,
+      },
+      'Comments' : {
+        'Comment Count' : 0,
       },
       'User Pic': UserImageUrl,
       'Image Urls': ImageUrl,
@@ -92,7 +95,6 @@ class UserManagement {
   Stream<QuerySnapshot> getPostsStream() {
     return Firestore.instance.collection("Posts").orderBy(
         "Creation Time", descending: true).snapshots();
-
   }
 
   getmyPosts(userID)async{
@@ -165,13 +167,30 @@ class UserManagement {
   updateLikes(Postid)async{
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     await Firestore.instance.collection('Posts').document('$Postid').updateData({
+          'Likes.Like Count': FieldValue.increment(1),
           'Likes.$userId': true,
     });
   }
   updateDislike(Postid) async{
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     await Firestore.instance.collection('Posts').document('$Postid').updateData({
+      'Likes.Like Count': FieldValue.increment(-1),
       'Likes.$userId': false,
     });
   }
+
+  Stream<QuerySnapshot> getPosts(PostId) {
+    return Firestore.instance.collection("Posts").where("Postid", isEqualTo: PostId).snapshots();
+  }
+
+  addComments(content,Postid,userId) async {
+    await Firestore.instance.collection('Posts').document('$Postid').updateData(
+        {
+      'Comments.Comment Count': FieldValue.increment(1),
+      'Comments.$userId.${DateTime.now().millisecondsSinceEpoch.toString}': content,
+    }
+    );
+  }
+
+
 }

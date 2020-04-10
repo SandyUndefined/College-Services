@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:college_services/pages/Homepage.dart';
 import 'package:college_services/services/usermanagement.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -21,7 +21,10 @@ class _MyPostsState extends State<MyPosts> {
 
   @override
   void initState() {
+    getCurrentusers();
+    userID = widget.uid;
     print(widget.uid);
+    print(userID);
     super.initState();
     _data = UserManagement().getmyPosts(widget.uid);
     if (_data == null || _data == 0) {
@@ -33,13 +36,21 @@ class _MyPostsState extends State<MyPosts> {
     }
   }
 
-  navigateToDetail(DocumentSnapshot post, String uid) {
+  getCurrentusers() async {
+    String id = userID = (await FirebaseAuth.instance.currentUser()).uid;
+    setState(() {
+      userID = id;
+    });
+  }
+
+  navigateToDetail(String postId, String uid,String name) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => DetailPage(
-                  post: post,
+              postId: postId,
                   uid: uid,
+              name: name,
                 )));
   }
 
@@ -75,8 +86,10 @@ class _MyPostsState extends State<MyPosts> {
                           padding: EdgeInsets.only(left: 10.0, top: 10),
                           child: InkWell(
                             onTap: () => navigateToDetail(
-                              snapshot.data[index],
+                              snapshot.data[index].data['Postid'],
                               snapshot.data[index].data["Userid"],
+                              snapshot.data[index].data["Name"],
+
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,20 +160,41 @@ class _MyPostsState extends State<MyPosts> {
                                 new Row(
                                   children: <Widget>[
                                     Expanded(
-                                      child: IconButton(
-                                          onPressed: () {
-                                            print(snapshot.data[index]);
-                                            print(snapshot
-                                                .data[index].data["Like"]);
-                                          },
-                                          icon:
-                                              snapshot.data[index].data["Like"]
+                                      child: Row(
+                                        children: <Widget>[
+                                          IconButton(
+                                              onPressed: () async {
+                                                if (snapshot.data[index].data['Likes']
+                                                [userID] !=
+                                                    true) {
+                                                  await UserManagement()
+                                                      .updateLikes(
+                                                      snapshot.data[index]
+                                                          .data['Postid']);
+                                                } else {
+                                                  await UserManagement()
+                                                      .updateDislike(
+                                                      snapshot.data[index]
+                                                          .data['Postid']);
+                                                }
+                                              },
+                                              icon:snapshot.data[index].data['Likes'][userID] == true
                                                   ? Icon(Icons.favorite,
-                                                      color: Colors.redAccent,
-                                                      size: 23.0)
+                                                  color: Colors.redAccent,
+                                                  size: 23.0)
                                                   : Icon(Icons.favorite_border,
-                                                      color: Colors.redAccent,
-                                                      size: 23.0)),
+                                                  color: Colors.redAccent,
+                                                  size: 23.0)
+                                          ),
+                                          snapshot.data[index].data['Likes']
+                                          ['Like Count'] ==
+                                              0
+                                              ? Text("")
+                                              : Text(snapshot.data[index]
+                                              .data['Likes']['Like Count']
+                                              .toString())
+                                        ],
+                                      ),
                                     ),
                                     Expanded(
                                       child: IconButton(
