@@ -65,6 +65,7 @@ class UserManagement {
     String PostID;
     PostID = uuid.v1();
     var date = new DateTime.now();
+
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     Firestore.instance.collection('/Posts').document('$PostID').setData({
       'Creation Time': date,
@@ -74,13 +75,16 @@ class UserManagement {
       'Likes': {
           'Like Count': 0,
       },
-      'Comments' : {
         'Comment Count' : 0,
-      },
       'User Pic': UserImageUrl,
       'Image Urls': ImageUrl,
       'Description': Des,
-    }).then((value) {
+    }).then((value){
+     /* Firestore.instance
+          .collection('/Posts')
+          .document('$PostID')
+          .collection("Comments")
+      .document('$mili').setData({});*/
       Navigator.of(context).pop();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -183,13 +187,23 @@ class UserManagement {
     return Firestore.instance.collection("Posts").where("Postid", isEqualTo: PostId).snapshots();
   }
 
-  addComments(content,Postid,userId) async {
+  addComments(content,Postid,userPic,name) async {
+    String mili = new DateTime.now().millisecondsSinceEpoch.toString();
     await Firestore.instance.collection('Posts').document('$Postid').updateData(
         {
-      'Comments.Comment Count': FieldValue.increment(1),
-      'Comments.$userId.${DateTime.now().millisecondsSinceEpoch.toString}': content,
+      'Comment Count': FieldValue.increment(1),
     }
     );
+    await Firestore.instance
+        .collection('/Posts')
+        .document('$Postid')
+        .collection("Comments")
+        .document('$mili').setData({'Comment' : content, 'Time Stamp': mili,'Name':name,'Image Url':userPic});
+  }
+
+  Stream<QuerySnapshot> getCommentsStream(PostId) {
+    return Firestore.instance.collection("Posts").document('$PostId').collection('Comments').orderBy(
+        'Time Stamp', descending: true).snapshots();
   }
 
 

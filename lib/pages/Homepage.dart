@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:college_services/pages/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,8 +39,9 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   final TextEditingController textEditingController = new TextEditingController();
   final FocusNode focusNode = new FocusNode();
-  String userID, usersId;
-
+  String userID, usersId,profilePic,comments;
+  var users;
+bool userFlag = false;
   navigateToProfile() {
     print(widget.uid);
     userID = widget.uid;
@@ -54,7 +57,15 @@ class _DetailPageState extends State<DetailPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    userID = widget.uid;
     getCurrentusers();
+    UserManagement().getProfileData(usersId).then((data)async{
+      setState(() {
+        userFlag = true;
+        users = data;
+        profilePic = users['Image Url'];
+      });
+    });
   }
 
   getCurrentusers() async {
@@ -64,10 +75,10 @@ class _DetailPageState extends State<DetailPage> {
     });
   }
 
-  comment(String content,String Postid,String Userid) async{
+  comment(String content,String Postid,String UserPic,String Name) async{
     if(content != ''){
-      textEditingController.clear();
-      UserManagement().addComments(content,Postid,Userid);
+      /*textEditingController.clear();*/
+      UserManagement().addComments(content,Postid,UserPic,Name);
     }
     else
     {
@@ -81,420 +92,297 @@ class _DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: Text(widget.name),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-          stream: UserManagement().getPosts(widget.postId),
-          builder: (_, doc) {
-            if (doc.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              final List<DocumentSnapshot> documents = doc.data.documents;
-              return ListView.builder(
-                  itemCount: documents.length,
-                  itemBuilder: (_, index) {
-                    return Card(
-                      elevation: 4,
-                      child: Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            new Row(
-                              children: <Widget>[
-                                InkWell(
-                                  onTap: () => navigateToProfile(),
-                                  child: Container(
-                                    width: 45,
-                                    height: 45,
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: NetworkImage(documents[index].data["User Pic"]),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius:
-                                      BorderRadius.all(Radius.circular(50.5)),
-                                    ),
-                                  ),
-                                ),
-                                Flexible(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(left: 25, right: 15),
-                                    child: Text(
-                                      documents[index].data["Description"],
-                                      style: TextStyle(fontSize: 17),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 70, bottom: 10),
-                              child: Text(
-                                DateFormat.yMMMd().add_jm().format(
-                                    DateTime.parse(documents[index]
-                                        .data["Creation Time"]
-                                        .toDate()
-                                        .toString())),
-                                style: TextStyle(
-                                    color: Colors.black38, fontSize: 12),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(left: 75, top: 15, bottom: 8),
-                              child: Text(
-                                documents.length.toString() + "Files uploaded",
-                                style: TextStyle(
-                                    color: Colors.blueAccent,
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                            Divider(),
-                            new Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Row(
-                                    children: <Widget>[
-                                      IconButton(
-                                          onPressed: () async {
-                                            if (documents[index].data['Likes']
-                                                    [usersId] !=
-                                                true) {
-                                              await UserManagement()
-                                                  .updateLikes(documents[index]
-                                                      .data['Postid']);
-                                            } else {
-                                              await UserManagement()
-                                                  .updateDislike(
-                                                      documents[index]
-                                                          .data['Postid']);
-                                            }
-                                          },
-                                          icon: documents[index].data['Likes']
-                                                      [usersId] ==
-                                                  true
-                                              ? Icon(Icons.favorite,
-                                                  color: Colors.redAccent,
-                                                  size: 23.0)
-                                              : Icon(Icons.favorite_border,
-                                                  color: Colors.redAccent,
-                                                  size: 23.0)),
-                                      documents[index].data['Likes']
-                                                  ['Like Count'] ==
-                                              0
-                                          ? Text("")
-                                          : Text(documents[index]
-                                              .data['Likes']['Like Count']
-                                              .toString())
-                                    ],
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left:15.0),
-                                    child: Row(
-                                      children: <Widget>[
-                                        IconButton(
-                                          onPressed: () {
-                                            print("message box");
-                                          },
-                                          icon: Icon(
-                                            Icons.chat_bubble,
-                                            color: Colors.blue,
-                                            size: 23.0,
-                                          ),
-                                        ),
-                                        documents[index].data['Comments']
-                                        ['Comment Count'] ==
-                                            0
-                                            ? Text("")
-                                            : Text(documents[index]
-                                            .data['Comments']['Comment Count']
-                                            .toString())
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.near_me,
-                                      color: Colors.blue,
-                                      size: 23.0,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: 30,
-                            ),
-                            Container(
-                              child: Column(
+      body: userFlag ? Container(
+        child: StreamBuilder<QuerySnapshot>(
+            stream: UserManagement().getPosts(widget.postId),
+            builder: (_, doc) {
+              if (doc.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                final List<DocumentSnapshot> documents = doc.data.documents;
+                return ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: documents.length,
+                    itemBuilder: (_, index) {
+                      return Card(
+                        elevation: 4,
+                        child: Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              new Row(
                                 children: <Widget>[
-                                  Container(
-                                    child: TextField(
-                                      controller: textEditingController,
-                                      focusNode: focusNode,
-                                      autofocus: false,
-                                      maxLines: 3,
-                                      minLines: 1,
-                                      keyboardType: TextInputType.text,
-                                      style: TextStyle(height: 1.0),
-                                      textCapitalization: TextCapitalization.sentences,
-                                      textInputAction: TextInputAction.newline,
-                                      toolbarOptions: ToolbarOptions(
-                                        cut: true,
-                                        copy: false,
-                                        selectAll: true,
-                                        paste: true,
-                                      ),
-                                      onSubmitted: (text) => print(textEditingController.text),
-                                    ),
-                                    /*TextField(
-                                      controller: textEditingController,
-                                      textCapitalization:
-                                          TextCapitalization.sentences,
-                                     *//* onEditingComplete: () {
-                                        FocusScope.of(context)
-                                            .requestFocus(new FocusNode());
-                                      },*//*
-                                      obscureText: false,
-                                      keyboardType: TextInputType.text,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                      ),
-                                      decoration: InputDecoration(
-                                        suffixIcon:
-                                        IconButton(
-                                            icon: Icon(Icons.arrow_forward),
-                                            color: Color.fromRGBO(0,21,43,1),
-                                            autofocus: true,
-                                            onPressed: () {
-                                              comment(textEditingController.text,documents[index]
-                                                  .data['Postid'],documents[index]
-                                                  .data['Userid']);
-                                            }),
-                                        *//*IconButton(
-                                          Icons.near_me,color: Color.fromRGBO(0,21,43,1),onPressed: (){
-
-                                        },),*//*
-                                        labelText: "Add comments",
-
-                                        alignLabelWithHint: true,
-                                        labelStyle: TextStyle(
-                                          color: Colors.black,
+                                  InkWell(
+                                    onTap: () => navigateToProfile(),
+                                    child: Container(
+                                      width: 45,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: NetworkImage(documents[index].data["User Pic"]),
+                                          fit: BoxFit.cover,
                                         ),
-                                        fillColor:
-                                            Color.fromRGBO(241, 243, 243, 1),
-                                        filled: true,
-                                        border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30.0)),
+                                        borderRadius:
+                                        BorderRadius.all(Radius.circular(50.5)),
                                       ),
-                                      onSubmitted: (value){
-                                        setState(() {
-                                          textEditingController.text = value;
-                                        });
-                                      },
-                                      focusNode: focusNode,
-                                    ),*/
+                                    ),
                                   ),
-                                  SizedBox(
-                                    height: 30,
-                                  ),
-                                  Center(
-                                    child: documents[index].data['Comments']
-                    ['Comment Count'] ==
-                    0 ? Text(
-                                      "Wow, such empty",
-                                      style: TextStyle(color: Colors.black26),
-                                    ) : Text(""),
-                                  ),
-                                  SizedBox(
-                                    height: 30,
+                                  Flexible(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(left: 25, right: 15),
+                                      child: Text(
+                                        documents[index].data["Description"],
+                                        style: TextStyle(fontSize: 17),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  });
-            }
-          }),
-    );
-
-     /*Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.post.data["Name"],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Card(
-            elevation: 4,
-            child: Padding(
-              padding: EdgeInsets.all(15),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  new Row(
-                    children: <Widget>[
-                      InkWell(
-                        onTap: () => navigateToProfile(),
-                        child: Container(
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: NetworkImage(widget.post.data["User Pic"]),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(50.5)),
-                          ),
-                        ),
-                      ),
-                      Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.only(left: 25, right: 15),
-                          child: Text(
-                            widget.post.data["Description"],
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 75, top: 5),
-                    child: Text(
-                      DateFormat.yMMMd().add_jm().format(DateTime.parse(widget
-                          .post.data["Creation Time"]
-                          .toDate()
-                          .toString())),
-                      style: TextStyle(color: Colors.black38, fontSize: 12),
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 75, top: 35, bottom: 8),
-                    child: Text(
-                      widget.post.data.length.toString() + "Files uploaded",
-                      style: TextStyle(
-                          color: Colors.blueAccent,
-                          fontSize: 14,
-                          fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  Divider(),
-                  new Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Row(
-                          children: <Widget>[
-                            IconButton(
-                                onPressed: () async {
-                                  if(widget.post.data['Likes'][usersId] != true){
-                                    await UserManagement().updateLikes(widget.post.data['Postid']);
-                                  }
-                                  else{
-                                    await UserManagement().updateDislike(widget.post.data['Postid']);
-                                  }
-                                },
-                                icon: widget.post.data['Likes'][usersId] == true ?  Icon(Icons.favorite,
-                                    color: Colors.redAccent, size: 23.0) :  Icon(Icons.favorite_border,
-                                    color: Colors.redAccent,
-                                    size: 23.0)
-                            ),
-                            widget.post.data['Likes']['Like Count'] == 0 ? Text(""): Text(widget.post.data['Likes']['Like Count'].toString())
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.chat_bubble,
-                            color: Colors.blue,
-                            size: 23.0,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.near_me,
-                            color: Colors.blue,
-                            size: 23.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  Container(
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          child: TextFormField(
-                            textCapitalization: TextCapitalization.sentences,
-                            onEditingComplete: () {
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
-                            },
-                            obscureText: false,
-                            keyboardType: TextInputType.text,
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                            decoration: InputDecoration(
-                              suffixIcon: Icon(Icons.near_me),
-                              labelText: "Add comments",
-                              alignLabelWithHint: true,
-                              labelStyle: TextStyle(
-                                color: Colors.black,
+                              Padding(
+                                padding: EdgeInsets.only(left: 70, bottom: 10),
+                                child: Text(
+                                  DateFormat.yMMMd().add_jm().format(
+                                      DateTime.parse(documents[index]
+                                          .data["Creation Time"]
+                                          .toDate()
+                                          .toString())),
+                                  style: TextStyle(
+                                      color: Colors.black38, fontSize: 12),
+                                ),
                               ),
-                              fillColor: Color.fromRGBO(241, 243, 243, 1),
-                              filled: true,
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30.0)),
-                            ),
-                            onChanged: (value) {},
+                              Padding(
+                                padding:
+                                    EdgeInsets.only(left: 75, top: 15, bottom: 8),
+                                child: Text(
+                                  documents.length.toString() + "Files uploaded",
+                                  style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontSize: 14,
+                                      fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                              Divider(),
+                              new Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Row(
+                                      children: <Widget>[
+                                        IconButton(
+                                            onPressed: () async {
+                                              if (documents[index].data['Likes']
+                                                      [usersId] !=
+                                                  true) {
+                                                await UserManagement()
+                                                    .updateLikes(documents[index]
+                                                        .data['Postid']);
+                                              } else {
+                                                await UserManagement()
+                                                    .updateDislike(
+                                                        documents[index]
+                                                            .data['Postid']);
+                                              }
+                                            },
+                                            icon: documents[index].data['Likes']
+                                                        [usersId] ==
+                                                    true
+                                                ? Icon(Icons.favorite,
+                                                    color: Colors.redAccent,
+                                                    size: 23.0)
+                                                : Icon(Icons.favorite_border,
+                                                    color: Colors.redAccent,
+                                                    size: 23.0)),
+                                        documents[index].data['Likes']
+                                                    ['Like Count'] ==
+                                                0
+                                            ? Text("")
+                                            : Text(documents[index]
+                                                .data['Likes']['Like Count']
+                                                .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
+                                      ],
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left:15.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          IconButton(
+                                            onPressed: () {
+                                              print("message box");
+                                            },
+                                            icon: Icon(
+                                              Icons.chat_bubble,
+                                              color: Colors.blue,
+                                              size: 23.0,
+                                            ),
+                                          ),
+                                          documents[index].data
+                                          ['Comment Count'] ==
+                                              0
+                                              ? Text("")
+                                              : Text(documents[index]
+                                              .data['Comment Count']
+                                              .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.near_me,
+                                        color: Colors.blue,
+                                        size: 23.0,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Container(
+                                child: Column(
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        Container(
+                                          width: 30,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: NetworkImage(profilePic),
+                                              fit: BoxFit.cover,
+                                            ),
+                                            borderRadius: BorderRadius.all(Radius.circular(50.5)),
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(left:12.0),
+                                            child: TextFormField(
+                                              onEditingComplete: (){
+                                                FocusScope.of(context).requestFocus(focusNode);
+                                              },
+                                              decoration: InputDecoration(
+                                                suffixIcon: IconButton(
+                                                  onPressed: () async {
+                                                   await comment(
+                                                       textEditingController.text,
+                                                       documents[index].data['Postid'],
+                                                       documents[index].data['User Pic'],
+                                                     documents[index].data['Name'],
+                                                   );
+                                                   textEditingController.clear();
+                                                  },
+                                                    icon: Icon(Icons.arrow_forward),
+                                                ),
+                                                hintText: "Add a comment",
+                                                alignLabelWithHint: true,
+                                                labelStyle: TextStyle(
+                                                  color: Colors.black,
+                                                ),
+                                                filled: false,
+                                              ),
+                                              obscureText: false,
+                                              controller: textEditingController,
+                                              focusNode: focusNode,
+                                              autofocus: false,
+                                              maxLines: 3,
+                                              minLines: 1,
+                                              keyboardType: TextInputType.text,
+                                              style: TextStyle(height: 1.0),
+                                              textCapitalization: TextCapitalization.sentences,
+                                              textInputAction: TextInputAction.done,
+                                              toolbarOptions: ToolbarOptions(
+                                                cut: true,
+                                                copy: false,
+                                                selectAll: true,
+                                                paste: true,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    Center(
+                                      child: documents[index].data
+                      ['Comment Count'] ==
+                      0 ? Text(
+                                        "Wow, such empty",
+                                        style: TextStyle(color: Colors.black26),
+                                      ) : Comments(documents[index].data['Postid']),
+                                    ),
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        Center(
-                          child: Text(
-                            "Wow, such empty",
-                            style: TextStyle(color: Colors.black26),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                      );
+                    });
+              }
+            }),
+      ) : Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget Comments(String PostId) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: UserManagement().getCommentsStream(PostId),
+      builder: (_,docs) {
+        if (docs.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        else {
+          final List<DocumentSnapshot> documents = docs.data.documents;
+          return ListView.builder(
+              scrollDirection: Axis.vertical,
+              shrinkWrap: true,
+              itemCount: documents.length,
+              itemBuilder: (_, index) {
+                return ListTile(
+          leading:  CircleAvatar(
+            radius: 20,
+            backgroundImage: NetworkImage(documents[index].data["Image Url"]), // no matter how big it is, it won't overflow
           ),
-        ),
-      ),
-    );*/
+          title: Text(documents[index].data["Name"],style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600),),
+          subtitle:  Text(documents[index].data["Comment"],style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400),),
+          trailing: PopupMenuButton(
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  child: InkWell(
+                    child: Container(child: Text("Delete",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w700),)),
+                    onTap:()  {
+                      print("Delete");
+                    },
+                  ),
+                ),
+              ];
+            },
+          ) ,
+        );
+              }
+          );
+        }
+      }
+    );
   }
 }
 
@@ -660,7 +548,7 @@ class _ListPageState extends State<ListPage> {
                                             ? Text("")
                                             : Text(documents[index]
                                                 .data['Likes']['Like Count']
-                                                .toString())
+                                                .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
                                       ],
                                     ),
                                   ),
@@ -683,13 +571,13 @@ class _ListPageState extends State<ListPage> {
                                               size: 23.0,
                                             ),
                                           ),
-                                          documents[index].data['Comments']
+                                          documents[index].data
                                           ['Comment Count'] ==
                                               0
                                               ? Text("")
                                               : Text(documents[index]
-                                              .data['Comments']['Comment Count']
-                                              .toString())
+                                              .data['Comment Count']
+                                              .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
                                         ],
                                       ),
                                     ),
