@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:college_services/pages/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -37,9 +35,11 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+
+
   final TextEditingController textEditingController = new TextEditingController();
   final FocusNode focusNode = new FocusNode();
-  String userID, usersId,profilePic,comments;
+  String userID, usersId,profilePic,comments,Name;
   var users;
 bool userFlag = false;
   navigateToProfile() {
@@ -64,6 +64,7 @@ bool userFlag = false;
         userFlag = true;
         users = data;
         profilePic = users['Image Url'];
+        Name = users['Name'];
       });
     });
   }
@@ -253,8 +254,8 @@ bool userFlag = false;
                                     Row(
                                       children: <Widget>[
                                         Container(
-                                          width: 30,
-                                          height: 30,
+                                          width: 35,
+                                          height: 35,
                                           decoration: BoxDecoration(
                                             image: DecorationImage(
                                               image: NetworkImage(profilePic),
@@ -267,19 +268,17 @@ bool userFlag = false;
                                           child: Padding(
                                             padding: const EdgeInsets.only(left:12.0),
                                             child: TextFormField(
-                                              onEditingComplete: (){
-                                                FocusScope.of(context).requestFocus(focusNode);
-                                              },
                                               decoration: InputDecoration(
                                                 suffixIcon: IconButton(
                                                   onPressed: () async {
                                                    await comment(
                                                        textEditingController.text,
                                                        documents[index].data['Postid'],
-                                                       documents[index].data['User Pic'],
-                                                     documents[index].data['Name'],
+                                                       profilePic,
+                                                     Name,
                                                    );
                                                    textEditingController.clear();
+                                                   FocusScope.of(context).requestFocus(FocusNode());
                                                   },
                                                     icon: Icon(Icons.arrow_forward),
                                                 ),
@@ -358,25 +357,12 @@ bool userFlag = false;
               itemBuilder: (_, index) {
                 return ListTile(
           leading:  CircleAvatar(
-            radius: 20,
+            radius: 18,
             backgroundImage: NetworkImage(documents[index].data["Image Url"]), // no matter how big it is, it won't overflow
           ),
-          title: Text(documents[index].data["Name"],style: TextStyle(fontSize: 15,fontWeight: FontWeight.w600),),
-          subtitle:  Text(documents[index].data["Comment"],style: TextStyle(fontSize: 16,fontWeight: FontWeight.w400),),
-          trailing: PopupMenuButton(
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                  child: InkWell(
-                    child: Container(child: Text("Delete",style: TextStyle(fontSize: 12,fontWeight: FontWeight.w700),)),
-                    onTap:()  {
-                      print("Delete");
-                    },
-                  ),
-                ),
-              ];
-            },
-          ) ,
+          title: Text(documents[index].data["Name"],style: TextStyle(fontSize: 14,fontWeight: FontWeight.w800),),
+          subtitle:  Text(documents[index].data["Comment"],style: TextStyle(fontSize: 12,fontWeight: FontWeight.w400),),
+                  trailing: Text(DateFormat.yMMMd().add_jm().format(DateTime.parse(documents[index].data["Time Stamp"].toDate().toString())),style: TextStyle(fontSize: 8,fontWeight: FontWeight.w600),),
         );
               }
           );
@@ -434,6 +420,9 @@ class _ListPageState extends State<ListPage> {
               );
             } else {
               final List<DocumentSnapshot> documents = snapshot.data.documents;
+              if(documents.length == 0){
+                return Center(child: Text("Nothing to show",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),),);
+              }
               return ListView.builder(
                   itemCount: documents.length,
                   itemBuilder: (_, index) {

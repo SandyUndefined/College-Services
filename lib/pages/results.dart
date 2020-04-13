@@ -25,6 +25,8 @@ class _ResultsState extends State<Results> {
         title: Text("Results",),
       ),
       url: urlString,
+      hidden: true,
+      withJavascript: true,
       withZoom: false,
     );
   }

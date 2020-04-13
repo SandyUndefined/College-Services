@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 import 'package:intl/intl.dart';
 
 class UserManagement {
+
   String uid;
   bool showPassword = true;
 
@@ -65,7 +66,6 @@ class UserManagement {
     String PostID;
     PostID = uuid.v1();
     var date = new DateTime.now();
-
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     Firestore.instance.collection('/Posts').document('$PostID').setData({
       'Creation Time': date,
@@ -80,11 +80,6 @@ class UserManagement {
       'Image Urls': ImageUrl,
       'Description': Des,
     }).then((value){
-     /* Firestore.instance
-          .collection('/Posts')
-          .document('$PostID')
-          .collection("Comments")
-      .document('$mili').setData({});*/
       Navigator.of(context).pop();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -101,7 +96,7 @@ class UserManagement {
         "Creation Time", descending: true).snapshots();
   }
 
-  getmyPosts(userID)async{
+  /*getmyPosts(userID)async{
     print('This is in Usermanagement $userID');
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     print('Current user $userId');
@@ -116,6 +111,18 @@ class UserManagement {
       return Qn.documents;
     }
 
+  }*/
+
+  Stream<QuerySnapshot> getmyPosts(userID,currentID){
+    print('This is in Usermanagement $userID');
+    print(getCurrentUser());
+    /*print('Current user $userId');*/
+    if (userID != null) {
+      return Firestore.instance.collection("Posts").where("Userid", isEqualTo: userID).orderBy("Creation Time", descending: true).snapshots();
+    }
+    else {
+      return Firestore.instance.collection("Posts").where("Userid", isEqualTo: currentID).orderBy("Creation Time", descending: true).snapshots();
+    }
   }
 
 
@@ -182,13 +189,11 @@ class UserManagement {
       'Likes.$userId': false,
     });
   }
-
   Stream<QuerySnapshot> getPosts(PostId) {
     return Firestore.instance.collection("Posts").where("Postid", isEqualTo: PostId).snapshots();
   }
-
   addComments(content,Postid,userPic,name) async {
-    String mili = new DateTime.now().millisecondsSinceEpoch.toString();
+    var date = new DateTime.now();
     await Firestore.instance.collection('Posts').document('$Postid').updateData(
         {
       'Comment Count': FieldValue.increment(1),
@@ -198,12 +203,20 @@ class UserManagement {
         .collection('/Posts')
         .document('$Postid')
         .collection("Comments")
-        .document('$mili').setData({'Comment' : content, 'Time Stamp': mili,'Name':name,'Image Url':userPic});
+        .document('$date').setData({'Comment' : content, 'Time Stamp': date,'Name':name,'Image Url':userPic});
   }
 
   Stream<QuerySnapshot> getCommentsStream(PostId) {
     return Firestore.instance.collection("Posts").document('$PostId').collection('Comments').orderBy(
         'Time Stamp', descending: true).snapshots();
+  }
+
+  deleteData(docId) async {
+  await Firestore.instance.collection('Posts').where("Postid", isEqualTo: docId).getDocuments().then((snapshot) {
+     for (DocumentSnapshot doc in snapshot.documents) {
+       doc.reference.delete();
+     }
+   });
   }
 
 

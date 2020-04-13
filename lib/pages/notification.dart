@@ -11,16 +11,13 @@ class _NotifyState extends State<Notify> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notify'),
+        title: Text('Notification'),
       ),
       body: Container(
         child: Center(
           child: Text(
-            'Notify ',
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
+            'Nothing to show',
+              style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),
           ),
         ),
       ),

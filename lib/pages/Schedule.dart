@@ -25,6 +25,8 @@ class _ExamsState extends State<Exams> {
         title: Text("Exam Schedule",),
       ),
       url: urlString,
+      hidden: true,
+      withJavascript: true,
       withZoom: false,
     );
   }

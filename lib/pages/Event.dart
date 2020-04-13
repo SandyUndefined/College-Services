@@ -22,9 +22,10 @@ class _EventState extends State<Event> {
   Widget build(BuildContext context){
     return WebviewScaffold(
       appBar: AppBar(
-        title: Text("Exam Schedule",),
+        title: Text("Events",),
       ),
       url: urlString,
+      hidden: true,
       withJavascript: true,
       withZoom: false,
     );
