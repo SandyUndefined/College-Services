@@ -93,249 +93,253 @@ bool userFlag = false;
       appBar: AppBar(
         title: Text(widget.name),
       ),
-      body: userFlag ? Container(
-        child: StreamBuilder<QuerySnapshot>(
-            stream: UserManagement().getPosts(widget.postId),
-            builder: (_, doc) {
-              if (doc.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                final List<DocumentSnapshot> documents = doc.data.documents;
-                return ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: documents.length,
-                    itemBuilder: (_, index) {
-                      return Card(
-                        elevation: 4,
-                        child: Padding(
-                          padding: EdgeInsets.all(15),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new Row(
-                                children: <Widget>[
-                                  InkWell(
-                                    onTap: () => navigateToProfile(),
-                                    child: Container(
-                                      width: 45,
-                                      height: 45,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(documents[index].data["User Pic"]),
-                                          fit: BoxFit.cover,
-                                        ),
-                                        borderRadius:
-                                        BorderRadius.all(Radius.circular(50.5)),
-                                      ),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 25, right: 15),
-                                      child: Text(
-                                        documents[index].data["Description"],
-                                        style: TextStyle(fontSize: 17),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 70, bottom: 10),
-                                child: Text(
-                                  DateFormat.yMMMd().add_jm().format(
-                                      DateTime.parse(documents[index]
-                                          .data["Creation Time"]
-                                          .toDate()
-                                          .toString())),
-                                  style: TextStyle(
-                                      color: Colors.black38, fontSize: 12),
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    EdgeInsets.only(left: 75, top: 15, bottom: 8),
-                                child: Text(
-                                  documents.length.toString() + "Files uploaded",
-                                  style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontSize: 14,
-                                      fontStyle: FontStyle.italic),
-                                ),
-                              ),
-                              Divider(),
-                              new Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Row(
-                                      children: <Widget>[
-                                        IconButton(
-                                            onPressed: () async {
-                                              if (documents[index].data['Likes']
-                                                      [usersId] !=
-                                                  true) {
-                                                await UserManagement()
-                                                    .updateLikes(documents[index]
-                                                        .data['Postid']);
-                                              } else {
-                                                await UserManagement()
-                                                    .updateDislike(
-                                                        documents[index]
-                                                            .data['Postid']);
-                                              }
-                                            },
-                                            icon: documents[index].data['Likes']
-                                                        [usersId] ==
-                                                    true
-                                                ? Icon(Icons.favorite,
-                                                    color: Colors.redAccent,
-                                                    size: 23.0)
-                                                : Icon(Icons.favorite_border,
-                                                    color: Colors.redAccent,
-                                                    size: 23.0)),
-                                        documents[index].data['Likes']
-                                                    ['Like Count'] ==
-                                                0
-                                            ? Text("")
-                                            : Text(documents[index]
-                                                .data['Likes']['Like Count']
-                                                .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left:15.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          IconButton(
-                                            onPressed: () {
-                                              print("message box");
-                                            },
-                                            icon: Icon(
-                                              Icons.chat_bubble,
-                                              color: Colors.blue,
-                                              size: 23.0,
-                                            ),
-                                          ),
-                                          documents[index].data
-                                          ['Comment Count'] ==
-                                              0
-                                              ? Text("")
-                                              : Text(documents[index]
-                                              .data['Comment Count']
-                                              .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.near_me,
-                                        color: Colors.blue,
-                                        size: 23.0,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Container(
-                                child: Column(
+      body: userFlag ? ListView(
+        children: <Widget>[
+         Container(
+          child: StreamBuilder<QuerySnapshot>(
+              stream: UserManagement().getPosts(widget.postId),
+              builder: (_, doc) {
+                if (doc.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else {
+                  final List<DocumentSnapshot> documents = doc.data.documents;
+                  return ListView.builder(
+                      physics: ScrollPhysics(),
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: documents.length,
+                      itemBuilder: (_, index) {
+                        return Card(
+                          elevation: 4,
+                          child: Padding(
+                            padding: EdgeInsets.all(15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                new Row(
                                   children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Container(
-                                          width: 35,
-                                          height: 35,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: NetworkImage(profilePic),
-                                              fit: BoxFit.cover,
-                                            ),
-                                            borderRadius: BorderRadius.all(Radius.circular(50.5)),
+                                    InkWell(
+                                      onTap: () => navigateToProfile(),
+                                      child: Container(
+                                        width: 45,
+                                        height: 45,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: NetworkImage(documents[index].data["User Pic"]),
+                                            fit: BoxFit.cover,
                                           ),
+                                          borderRadius:
+                                          BorderRadius.all(Radius.circular(50.5)),
                                         ),
-                                        Flexible(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(left:12.0),
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                suffixIcon: IconButton(
-                                                  onPressed: () async {
-                                                   await comment(
-                                                       textEditingController.text,
-                                                       documents[index].data['Postid'],
-                                                       profilePic,
-                                                     Name,
-                                                   );
-                                                   textEditingController.clear();
-                                                   FocusScope.of(context).requestFocus(FocusNode());
-                                                  },
-                                                    icon: Icon(Icons.arrow_forward),
-                                                ),
-                                                hintText: "Add a comment",
-                                                alignLabelWithHint: true,
-                                                labelStyle: TextStyle(
-                                                  color: Colors.black,
-                                                ),
-                                                filled: false,
-                                              ),
-                                              obscureText: false,
-                                              controller: textEditingController,
-                                              focusNode: focusNode,
-                                              autofocus: false,
-                                              maxLines: 3,
-                                              minLines: 1,
-                                              keyboardType: TextInputType.text,
-                                              style: TextStyle(height: 1.0),
-                                              textCapitalization: TextCapitalization.sentences,
-                                              textInputAction: TextInputAction.done,
-                                              toolbarOptions: ToolbarOptions(
-                                                cut: true,
-                                                copy: false,
-                                                selectAll: true,
-                                                paste: true,
-                                              ),
-                                            ),
-                                          ),
+                                      ),
+                                    ),
+                                    Flexible(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 25, right: 15),
+                                        child: Text(
+                                          documents[index].data["Description"],
+                                          style: TextStyle(fontSize: 17),
                                         ),
-                                      ],
-                                    ),
-
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Center(
-                                      child: documents[index].data
-                      ['Comment Count'] ==
-                      0 ? Text(
-                                        "Wow, such empty",
-                                        style: TextStyle(color: Colors.black26),
-                                      ) : Comments(documents[index].data['Postid']),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
+                                Padding(
+                                  padding: EdgeInsets.only(left: 70, bottom: 10),
+                                  child: Text(
+                                    DateFormat.yMMMd().add_jm().format(
+                                        DateTime.parse(documents[index]
+                                            .data["Creation Time"]
+                                            .toDate()
+                                            .toString())),
+                                    style: TextStyle(
+                                        color: Colors.black38, fontSize: 12),
+                                  ),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(left: 75, top: 15, bottom: 8),
+                                  child: Text(
+                                    documents.length.toString() + "Files uploaded",
+                                    style: TextStyle(
+                                        color: Colors.blueAccent,
+                                        fontSize: 14,
+                                        fontStyle: FontStyle.italic),
+                                  ),
+                                ),
+                                Divider(),
+                                new Row(
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Row(
+                                        children: <Widget>[
+                                          IconButton(
+                                              onPressed: () async {
+                                                if (documents[index].data['Likes']
+                                                        [usersId] !=
+                                                    true) {
+                                                  await UserManagement()
+                                                      .updateLikes(documents[index]
+                                                          .data['Postid']);
+                                                } else {
+                                                  await UserManagement()
+                                                      .updateDislike(
+                                                          documents[index]
+                                                              .data['Postid']);
+                                                }
+                                              },
+                                              icon: documents[index].data['Likes']
+                                                          [usersId] ==
+                                                      true
+                                                  ? Icon(Icons.favorite,
+                                                      color: Colors.redAccent,
+                                                      size: 23.0)
+                                                  : Icon(Icons.favorite_border,
+                                                      color: Colors.redAccent,
+                                                      size: 23.0)),
+                                          documents[index].data['Likes']
+                                                      ['Like Count'] ==
+                                                  0
+                                              ? Text("")
+                                              : Text(documents[index]
+                                                  .data['Likes']['Like Count']
+                                                  .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(left:15.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            IconButton(
+                                              onPressed: () {
+                                                print("message box");
+                                              },
+                                              icon: Icon(
+                                                Icons.chat_bubble,
+                                                color: Colors.blue,
+                                                size: 23.0,
+                                              ),
+                                            ),
+                                            documents[index].data
+                                            ['Comment Count'] ==
+                                                0
+                                                ? Text("")
+                                                : Text(documents[index]
+                                                .data['Comment Count']
+                                                .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.near_me,
+                                          color: Colors.blue,
+                                          size: 23.0,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        children: <Widget>[
+                                          Container(
+                                            width: 35,
+                                            height: 35,
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: NetworkImage(profilePic),
+                                                fit: BoxFit.cover,
+                                              ),
+                                              borderRadius: BorderRadius.all(Radius.circular(50.5)),
+                                            ),
+                                          ),
+                                          Flexible(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left:12.0),
+                                              child: TextFormField(
+                                                decoration: InputDecoration(
+                                                  suffixIcon: IconButton(
+                                                    onPressed: () async {
+                                                     await comment(
+                                                         textEditingController.text,
+                                                         documents[index].data['Postid'],
+                                                         profilePic,
+                                                       Name,
+                                                     );
+                                                     textEditingController.clear();
+                                                     FocusScope.of(context).requestFocus(FocusNode());
+                                                    },
+                                                      icon: Icon(Icons.arrow_forward),
+                                                  ),
+                                                  hintText: "Add a comment",
+                                                  alignLabelWithHint: true,
+                                                  labelStyle: TextStyle(
+                                                    color: Colors.black,
+                                                  ),
+                                                  filled: false,
+                                                ),
+                                                obscureText: false,
+                                                controller: textEditingController,
+                                                focusNode: focusNode,
+                                                autofocus: false,
+                                                maxLines: 3,
+                                                minLines: 1,
+                                                keyboardType: TextInputType.text,
+                                                style: TextStyle(height: 1.0),
+                                                textCapitalization: TextCapitalization.sentences,
+                                                textInputAction: TextInputAction.done,
+                                                toolbarOptions: ToolbarOptions(
+                                                  cut: true,
+                                                  copy: false,
+                                                  selectAll: true,
+                                                  paste: true,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                      Center(
+                                        child: documents[index].data
+                        ['Comment Count'] ==
+                        0 ? Text(
+                                          "Wow, such empty",
+                                          style: TextStyle(color: Colors.black26),
+                                        ) : Comments(documents[index].data['Postid']),
+                                      ),
+                                      SizedBox(
+                                        height: 30,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    });
-              }
-            }),
-      ) : Center(child: CircularProgressIndicator()),
+                        );
+                      });
+                }
+              }),
+        ),
+  ],) : Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -351,6 +355,7 @@ bool userFlag = false;
         else {
           final List<DocumentSnapshot> documents = docs.data.documents;
           return ListView.builder(
+              physics: ScrollPhysics(),
               scrollDirection: Axis.vertical,
               shrinkWrap: true,
               itemCount: documents.length,
