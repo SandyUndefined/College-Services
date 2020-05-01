@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -36,7 +37,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
 
-
+  List<NetworkImage> _listOfImages = <NetworkImage>[];
   final TextEditingController textEditingController = new TextEditingController();
   final FocusNode focusNode = new FocusNode();
   String userID, usersId,profilePic,comments,Name;
@@ -110,7 +111,7 @@ bool userFlag = false;
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
                       itemCount: documents.length,
-                      itemBuilder: (_, index) {
+                      itemBuilder: (_, indexs) {
                         return Card(
                           elevation: 4,
                           child: Padding(
@@ -128,7 +129,7 @@ bool userFlag = false;
                                         height: 45,
                                         decoration: BoxDecoration(
                                           image: DecorationImage(
-                                            image: NetworkImage(documents[index].data["User Pic"]),
+                                            image: NetworkImage(documents[indexs].data["User Pic"]),
                                             fit: BoxFit.cover,
                                           ),
                                           borderRadius:
@@ -140,7 +141,7 @@ bool userFlag = false;
                                       child: Padding(
                                         padding: EdgeInsets.only(left: 25, right: 15),
                                         child: Text(
-                                          documents[index].data["Description"],
+                                          documents[indexs].data["Description"],
                                           style: TextStyle(fontSize: 17),
                                         ),
                                       ),
@@ -151,7 +152,7 @@ bool userFlag = false;
                                   padding: EdgeInsets.only(left: 70, bottom: 10),
                                   child: Text(
                                     DateFormat.yMMMd().add_jm().format(
-                                        DateTime.parse(documents[index]
+                                        DateTime.parse(documents[indexs]
                                             .data["Creation Time"]
                                             .toDate()
                                             .toString())),
@@ -162,13 +163,38 @@ bool userFlag = false;
                                 Padding(
                                   padding:
                                       EdgeInsets.only(left: 75, top: 15, bottom: 8),
-                                  child: Text(
-                                    documents.length.toString() + "Files uploaded",
-                                    style: TextStyle(
-                                        color: Colors.blueAccent,
-                                        fontSize: 14,
-                                        fontStyle: FontStyle.italic),
-                                  ),
+                                    child: GridView.count(
+                                      physics: ScrollPhysics(),
+                                      shrinkWrap: true,
+                                        crossAxisCount: 2,
+                                      // ignore: missing_return
+                                      children:List.generate(documents[indexs].data["Image Urls"].length, (index){
+                                           _listOfImages = [];
+                                           for(int i = 0;i<documents[indexs]
+                                               .data["Image Urls"].length;i++){
+                                             _listOfImages.add(NetworkImage(documents[indexs]
+                                                 .data["Image Urls"][i]));
+                                             return Container(
+                                               width: 400,
+                                               height: 400,
+                                               child: Image.network(
+                                                   documents[indexs]
+                                                   .data["Image Urls"][index],
+                                                 loadingBuilder:(BuildContext context, Widget child,ImageChunkEvent loadingProgress) {
+                                                   if (loadingProgress == null) return child;
+                                                   return Center(
+                                                     child: CircularProgressIndicator(
+                                                       value: loadingProgress.expectedTotalBytes != null ?
+                                                       loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                                           : null,
+                                                     ),
+                                                   );
+                                                 },
+                                               ),
+                                             );
+                                           }
+                                      }),
+                                    )
                                 ),
                                 Divider(),
                                 new Row(
@@ -178,20 +204,20 @@ bool userFlag = false;
                                         children: <Widget>[
                                           IconButton(
                                               onPressed: () async {
-                                                if (documents[index].data['Likes']
+                                                if (documents[indexs].data['Likes']
                                                         [usersId] !=
                                                     true) {
                                                   await UserManagement()
-                                                      .updateLikes(documents[index]
+                                                      .updateLikes(documents[indexs]
                                                           .data['Postid']);
                                                 } else {
                                                   await UserManagement()
                                                       .updateDislike(
-                                                          documents[index]
+                                                          documents[indexs]
                                                               .data['Postid']);
                                                 }
                                               },
-                                              icon: documents[index].data['Likes']
+                                              icon: documents[indexs].data['Likes']
                                                           [usersId] ==
                                                       true
                                                   ? Icon(Icons.favorite,
@@ -200,11 +226,11 @@ bool userFlag = false;
                                                   : Icon(Icons.favorite_border,
                                                       color: Colors.redAccent,
                                                       size: 23.0)),
-                                          documents[index].data['Likes']
+                                          documents[indexs].data['Likes']
                                                       ['Like Count'] ==
                                                   0
                                               ? Text("")
-                                              : Text(documents[index]
+                                              : Text(documents[indexs]
                                                   .data['Likes']['Like Count']
                                                   .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
                                         ],
@@ -225,11 +251,11 @@ bool userFlag = false;
                                                 size: 23.0,
                                               ),
                                             ),
-                                            documents[index].data
+                                            documents[indexs].data
                                             ['Comment Count'] ==
                                                 0
                                                 ? Text("")
-                                                : Text(documents[index]
+                                                : Text(documents[indexs]
                                                 .data['Comment Count']
                                                 .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
                                           ],
@@ -276,7 +302,7 @@ bool userFlag = false;
                                                     onPressed: () async {
                                                      await comment(
                                                          textEditingController.text,
-                                                         documents[index].data['Postid'],
+                                                         documents[indexs].data['Postid'],
                                                          profilePic,
                                                        Name,
                                                      );
@@ -318,12 +344,12 @@ bool userFlag = false;
                                         height: 30,
                                       ),
                                       Center(
-                                        child: documents[index].data
+                                        child: documents[indexs].data
                         ['Comment Count'] ==
                         0 ? Text(
                                           "Wow, such empty",
                                           style: TextStyle(color: Colors.black26),
-                                        ) : Comments(documents[index].data['Postid']),
+                                        ) : Comments(documents[indexs].data['Postid']),
                                       ),
                                       SizedBox(
                                         height: 30,
@@ -348,9 +374,7 @@ bool userFlag = false;
       stream: UserManagement().getCommentsStream(PostId),
       builder: (_,docs) {
         if (docs.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return Container();
         }
         else {
           final List<DocumentSnapshot> documents = docs.data.documents;
@@ -496,8 +520,8 @@ class _ListPageState extends State<ListPage> {
                                 padding: EdgeInsets.only(
                                     left: 75, top: 15, bottom: 8),
                                 child: Text(
-                                  documents.length.toString() +
-                                      "Files uploaded",
+                                  documents[index].data["Image Urls"].length.toString() +
+                                      " File uploaded",
                                   style: TextStyle(
                                       color: Colors.blueAccent,
                                       fontSize: 14,

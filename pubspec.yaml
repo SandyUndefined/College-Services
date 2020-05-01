@@ -21,7 +21,6 @@ dependencies:
     sdk: flutter
   firebase_storage: ^3.1.1
   image_picker: ^0.6.3+1
-  file_picker: ^1.4.2
   intl: ^0.16.1
   image_cropper: ^1.1.2
   progress_dialog: ^1.2.0
@@ -38,6 +37,7 @@ dependencies:
   uuid: ^2.0.4
   validators: ^2.0.0+1
   flutter_webview_plugin:
+  multi_image_picker: ^4.6.7
 
 
   # The following adds the Cupertino Icons font to your application.

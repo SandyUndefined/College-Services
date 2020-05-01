@@ -1,13 +1,20 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+
+class Item {
+  const Item(this.name,this.icon);
+  final String name;
+  final Icon icon;
+}
 
 class Upload extends StatefulWidget {
   @override
@@ -15,27 +22,31 @@ class Upload extends StatefulWidget {
 }
 
 class _UploadState extends State<Upload> {
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _key = GlobalKey();
   TextEditingController _desController = new TextEditingController();
   List<StorageUploadTask> _tasks = <StorageUploadTask>[];
   FocusNode myFocus = FocusNode();
   String Des;
   String _fileName;
-  String ImageUrl;
-  String _path;
-  Map<String, String> _paths;
-  String _extension;
-  bool _loadingPath = false;
-  bool _multipick = true;
+  List<String> uploadUrls = [];
+  List<Asset> Selectedimages = List<Asset>();
+  String _error = 'No Error Dectected';
   double _height;
   double _width;
-  bool userFlag = false;
+  bool userFlag = false,images= false,pdf=false;
+  Item selectedtype;
   var users;
   Uint8List image;
-  StorageReference imageRef = FirebaseStorage.instance.ref().child("User Profile Photo");
-  String userId,Name,PhoneNumber,UserImageUrl;
+  StorageReference imageRef =
+      FirebaseStorage.instance.ref().child("User Profile Photo");
+  String userId, Name, PhoneNumber, UserImageUrl;
   ProgressDialog pr;
+
+  List <Item>type = <Item>[
+    const Item('Images', Icon(Icons.image,)),
+    const Item('Pdf', Icon(Icons.picture_as_pdf,)),
+  ];
 
   @override
   void dispose() {
@@ -59,32 +70,69 @@ class _UploadState extends State<Upload> {
     });
   }
 
-  void _chooseFiles() async{
+  void _chooseFiles() async {
+    if(images){
+      loadAssets();
+      print("Images");
+    }
+    else if(pdf){
+      print("Pdf");
+    }
+    else{
+      print("select a type");
+    }
+  }
+
+  Widget buildGridView() {
+      return Selectedimages.length != 0 ? GridView.count(
+        shrinkWrap: true,
+        crossAxisCount: 4,
+        children: List.generate(Selectedimages.length, (index) {
+          Asset asset = Selectedimages[index];
+          return AssetThumb(
+            asset: asset,
+            width: 300,
+            height: 300,
+          );
+        }),
+      ) : Container();
+  }
+
+  Future<void> loadAssets() async {
+    List<Asset> resultList = List<Asset>();
+    String error = 'No Error Dectected';
     try {
-        print('Saab');
-        _path = null;
-        _paths = await FilePicker.getMultiFilePath(
-            type: FileType.ANY, fileExtension: _extension);
-    }catch (e) {
-      print("Unsupported operation" + e.toString());
+      resultList = await MultiImagePicker.pickImages(
+        maxImages: 8,
+        enableCamera: true,
+        selectedAssets: Selectedimages,
+        cupertinoOptions: CupertinoOptions(takePhotoIcon: "chat"),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#ffbc72",
+          actionBarTitleColor: "#ffffff",
+          statusBarColor: "#ffbc72",
+          lightStatusBar: true,
+          actionBarTitle: "Select Images",
+          allViewTitle: "All Photos",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#00152b",
+        ),
+      );
+    } on Exception catch (e) {
+      error = e.toString();
     }
     if (!mounted) return;
     setState(() {
-      _loadingPath = false;
-      _fileName = _path != null
-          ? _path.split('/').last
-          : _paths.keys.toString().replaceAll("(", "").replaceAll(")", "");
+      Selectedimages = resultList;
+      _error = error;
     });
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
-    pr = new ProgressDialog(context,type: ProgressDialogType.Normal);
+    pr = new ProgressDialog(context, type: ProgressDialogType.Normal);
     pr.style(
       message: 'Please wait...',
       borderRadius: 10.0,
@@ -98,95 +146,49 @@ class _UploadState extends State<Upload> {
           color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.w600),
     );
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Create Post'),
       ),
-      body: userFlag ? Container(
-        child:SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            userData(),
-            SizedBox(height: 30,),
-            desBox(),
-            SizedBox(height: 30,),
-            ChooseFiles(),
-            SizedBox(height: 50,),
-            new Builder(
-              builder: (BuildContext context) => _loadingPath
-                  ? Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: const CircularProgressIndicator())
-                  : _paths != null
-                  ? new Container(
-                padding: const EdgeInsets.only(bottom: 30.0),
-                height: MediaQuery.of(context).size.height * 0.50,
-                child: new Scrollbar(
-                    child: new ListView.separated(
-                      itemCount: _paths != null && _paths.isNotEmpty
-                          ? _paths.length
-                          : 1,
-                      itemBuilder: (BuildContext context, int index ) {
-                        final bool isMultiPath =
-                            _paths != null && _paths.isNotEmpty;
-                        final String name = 'File $index : ' +
-                            (isMultiPath
-                                ? _paths.keys.toList()[index]
-                                : _fileName );
-                        final path = isMultiPath
-                            ? _paths.values.toList()[index].toString()
-                            : _path;
-
-                        return new ListTile(
-                          title: new Text(
-                            name,
-                          ),
-                          subtitle: new Text(path),
-                        );
-                        },
-                      separatorBuilder:
-                          (BuildContext context, int index) =>
-                      new Divider(),
-                    )),
-              )
-                  : new Container(),
+      body: userFlag
+          ? SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+              userData(),
+              SizedBox(
+                height: 30,
+              ),
+              desBox(),
+              SizedBox(
+                height: 30,
+              ),
+              ChooseFiles(),
+              SizedBox(
+                height: 50,
+              ),
+                  Flexible(child: buildGridView()),
+                  SizedBox(
+                height: 30,
+              ),
+              postButton(),
+              SizedBox(
+                height: 30,
+              ),
+            ]),
+          )
+          : new Container(
+              child: Center(child: CircularProgressIndicator()),
             ),
-            SizedBox(height: 30,),
-            postButton(),
-            SizedBox(height: 30,),
-
-          ]
-        ),
-        ),
-      )
-        : new Container(
-        child: Center(child: CircularProgressIndicator()),
-      ),
     );
-
   }
-  Widget userData(){
+
+  Widget userData() {
     return Row(
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.only(left: 25,top: 30),
-          child: /*Container(
-            width: 45,
-            height: 45,
-            child: CircleAvatar(
-              radius: 35,
-              backgroundColor: Colors.transparent,
-              child: ClipOval(
-                child: Center(
-                  child: (UserImageUrl!=null)?Image.network(UserImageUrl,fit: BoxFit.contain,):
-                  Icon(
-                    Icons.person,
-                    color: Colors.grey.shade700,
-                  ),
-                ),
-              ),
-            ),
-          ),*/
-          Container(
+          padding: EdgeInsets.only(left: 25, top: 30),
+          child: Container(
             width: 65,
             height: 65,
             decoration: BoxDecoration(
@@ -199,101 +201,170 @@ class _UploadState extends State<Upload> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: _width/12,top: 25),
-          child: userFlag ?
-          Text(Name,
-            style: TextStyle(fontWeight: FontWeight.w600,fontSize: 14),
-          )
-              :CircularProgressIndicator(),
+          padding: EdgeInsets.only(left: _width / 12, top: 25),
+          child: userFlag
+              ? Text(
+                  Name,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                )
+              : CircularProgressIndicator(),
         ),
       ],
     );
   }
 
-  Widget desBox(){
+  Widget desBox() {
     return Container(
-      padding: EdgeInsets.only(left: 28,right: 28,),
-      child:TextField(
+      padding: EdgeInsets.only(
+        left: 28,
+        right: 28,
+      ),
+      child: TextField(
         textCapitalization: TextCapitalization.sentences,
         controller: _desController,
-      keyboardType: TextInputType.multiline,
+        keyboardType: TextInputType.multiline,
         textInputAction: TextInputAction.done,
-      maxLines: 6,
-      obscureText: false,
-      style: TextStyle(
-        fontSize: 16,
-      ),
-      decoration: new InputDecoration(
-        labelText: "Something in mind?",
-        alignLabelWithHint: true,
-        labelStyle: TextStyle(
-          color: Colors.black,
+        maxLines: 6,
+        obscureText: false,
+        style: TextStyle(
+          fontSize: 16,
         ),
-        fillColor: Color.fromRGBO(241, 243, 243, 1),
-        filled: true,
-        border: new OutlineInputBorder(
-          borderRadius: new BorderRadius.circular(5.0),
+        decoration: new InputDecoration(
+          labelText: "Something in mind?",
+          alignLabelWithHint: true,
+          labelStyle: TextStyle(
+            color: Colors.black,
+          ),
+          fillColor: Color.fromRGBO(241, 243, 243, 1),
+          filled: true,
+          border: new OutlineInputBorder(
+            borderRadius: new BorderRadius.circular(5.0),
+          ),
         ),
-      ),
-        onChanged: (value){
-            setState(() {
-              Des = value;
-              print(Des);
-            });
+        onChanged: (value) {
+          setState(() {
+            Des = value;
+            print(Des);
+          });
         },
       ),
     );
   }
-  Widget ChooseFiles(){
-    return RaisedButton(
-      shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(5.0),),
+
+  Widget ChooseFiles() {
+    return Container(
+      alignment: Alignment.center,
+      width: _width / 1.4,
       color: Color.fromRGBO(241, 243, 243, 1),
-      onPressed: () => _chooseFiles(),
-      textColor: Colors.black45,
-      padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-      child: Container(
-        alignment: Alignment.center,
-        width: _width/2.2,
-        child: Text(
-          "Select Files to Upload",
-          style: TextStyle(
-            fontSize: 16.0,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              color: Color.fromRGBO(241, 243, 243, 1),
+              onPressed: () {
+               try{
+                 if(selectedtype == null){
+                   _scaffoldKey.currentState.showSnackBar(new SnackBar(
+                       content: new Text("Please Select File type")
+                   ));
+                 }
+                 else{
+                   _chooseFiles();
+                 }
+               }
+               catch(e){
+                 print(e);
+               }
+              },
+              textColor: Colors.black45,
+              padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
+              child: Container(
+                alignment: Alignment.center,
+                width: _width / 2.2,
+                child: Text(
+                  "Select Files",
+                  style: TextStyle(
+                    fontSize: 13.0,
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
+          Container(
+            height: _height / 18,
+            child: VerticalDivider(
+              color: Colors.black,
+              thickness: 1.5,
+            ),
+          ),
+          DropdownButton<Item>(
+            hint: Text("Type"),
+            value: selectedtype,
+            onChanged: (Item Value) {
+              setState(() {
+                selectedtype = Value;
+                if(selectedtype.name == 'Images'){
+                  print("images");
+                  setState(() {
+                    pdf = false;
+                    images=true;
+                  });
+                }
+                else if (selectedtype.name == 'Pdf'){
+                  print("pdf");
+                  pdf = true;
+                  images=false;
+                }
+                else{
+                  print("null");
+                }
+
+              });
+            },
+            items: type.map((Item type){
+              return DropdownMenuItem<Item>(
+                value: type,
+                child: Row(
+                  children: <Widget>[
+                    type.icon,
+                    SizedBox(width: 5,),
+                    Text(type.name),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
-  Widget postButton(){
+
+  Widget postButton() {
     return RaisedButton(
-      shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
-      color: Color.fromRGBO(0,21,43,1),
-      onPressed:  () {
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      color: Color.fromRGBO(0, 21, 43, 1),
+      onPressed: () {
         if (Des != null) {
           print('ho gya ');
-          pr.show();
-          Future.delayed (Duration(seconds: 3), ).then((onValue){
-            if(pr.isShowing())
-            {
+             pr.show();
               print('Pic uploading');
-              uploadToFirebase();
-              UploadPost();
-              Future.delayed(Duration(seconds: 3),).then((onValue){
-                pr.hide();
-              });
-            }
-          }
-          );
-        }
-        else
-        {
-          print('Nahi hua....pic is not uploading');
+              UploadImages();
+        } else {
+          _scaffoldKey.currentState.showSnackBar(new SnackBar(
+              content: new Text("Please Enter Description")
+          ));
         }
       },
       textColor: Colors.white,
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
       child: Container(
         alignment: Alignment.center,
-        width: _width/1.7,
+        width: _width / 1.7,
         child: Text(
           "Upload Post",
           style: TextStyle(
@@ -304,29 +375,30 @@ class _UploadState extends State<Upload> {
     );
   }
 
-
-  void UploadPost() async{
-   UserManagement().addPost(Name,Des,UserImageUrl,ImageUrl,PhoneNumber, context);
+  void UploadImages(){
+    for(var imageFile in Selectedimages){
+      uploadToFirebase(imageFile).then((downloadUrl) {
+        uploadUrls.add(downloadUrl.toString());
+        if(uploadUrls.length == Selectedimages.length){
+          print("This is in if else $uploadUrls");
+          UserManagement().addPost(Name,Des,UserImageUrl,uploadUrls,PhoneNumber, context);
+        }
+      }).catchError((onError){
+        print("This is error $onError");
+      });
+    }
   }
 
-  void uploadToFirebase() async{
-    _paths.forEach((fileName, filePath) => {upload(fileName, filePath)});
-  }
-
-  void upload(fileName, filePath) async{
+  Future uploadToFirebase(Asset asset) async {
+    print("object");
     DateTime date = new DateTime.now();
     var Date = DateFormat('EEE d MMM kk:mm:ss').format(date);
+    ByteData byteData = await asset.getByteData(quality: 60);
+    List<int> imageData = byteData.buffer.asUint8List();
     StorageReference storageRef = FirebaseStorage.instance.ref().child("User Posts").child('$PhoneNumber').child('$Date').child('$date');
-    final StorageUploadTask uploadTask = storageRef.putFile(File(filePath));
-    var downUrl = await (await uploadTask.onComplete).ref.getDownloadURL();
-    var url = downUrl.toString();
-    print(url);
-    setState(() {
-      ImageUrl = url;
-      print("le le re baba Done");
-      print(ImageUrl);
-    });
-
+    StorageUploadTask uploadTask = storageRef.putData(imageData);
+    StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
+    return storageTaskSnapshot.ref.getDownloadURL();
   }
+ }
 
-}

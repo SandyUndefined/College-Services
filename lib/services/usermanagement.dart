@@ -61,7 +61,7 @@ class UserManagement {
     return userId;
   }
 
-  addPost(Name, Des, UserImageUrl, ImageUrl, PhoneNumber, context) async {
+  addPost(Name, Des, UserImageUrl, Urls, PhoneNumber, context) async {
     var uuid = new Uuid();
     String PostID;
     PostID = uuid.v1();
@@ -77,17 +77,14 @@ class UserManagement {
       },
         'Comment Count' : 0,
       'User Pic': UserImageUrl,
-      'Image Urls': ImageUrl,
+      'Image Urls': Urls,
       'Description': Des,
     }).then((value){
       Navigator.of(context).pop();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
     }).catchError((e) {
-      final snackBar = SnackBar(
-        content: Text(e.message),
-      );
-      Scaffold.of(context).showSnackBar(snackBar);
+      print("This is error $e");
     });
   }
 
