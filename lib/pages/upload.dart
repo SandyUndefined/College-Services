@@ -339,11 +339,16 @@ class _UploadState extends State<Upload> {
       color: Color.fromRGBO(0, 21, 43, 1),
       onPressed: () {
         if (Des != null) {
+          if(images){
           print('ho gya ');
           pr.style(message: "Post uploading...");
              pr.show();
               print('Pic uploading');
               UploadImages();
+          }
+          else{
+            Fluttertoast.showToast(msg: "Not Avilable");
+          }
         } else {
           _scaffoldKey.currentState.showSnackBar(new SnackBar(
               content: new Text("Please Enter Description")

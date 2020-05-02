@@ -285,7 +285,7 @@ class _ProfileState extends State<Profile> {
                               child: Text("Posts",style: TextStyle(fontSize: 16,color: Colors.grey),),
                             ),
                             RaisedButton(
-                              shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(18.0),),
+                              shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(8.0),),
                               color: Color.fromRGBO(0,21,43,1),
                               textColor: Colors.white,
                               /*padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),*/
@@ -295,7 +295,7 @@ class _ProfileState extends State<Profile> {
                                 child: Text(
                                   "View Posts",
                                   style: TextStyle(
-                                    fontSize: 14.0,
+                                    fontSize: 12.0,
                                   ),
                                 ),
                               ),
@@ -334,7 +334,7 @@ class _ProfileState extends State<Profile> {
                               child: Text("Send Message",style: TextStyle(fontSize: 16,color: Colors.grey),),
                             ),
                             RaisedButton(
-                              shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(18.0),),
+                              shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(8.0),),
                               color: Color.fromRGBO(0,21,43,1),
                               textColor: Colors.white,
                               /*padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),*/
@@ -344,7 +344,7 @@ class _ProfileState extends State<Profile> {
                                 child: Text(
                                   "Send Message",
                                   style: TextStyle(
-                                    fontSize: 14.0,
+                                    fontSize: 12.0,
                                   ),
                                 ),
                               ),

@@ -1,7 +1,7 @@
-import 'package:college_services/pages/EditProfile.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class Setting extends StatefulWidget {
   final String uid;
@@ -76,10 +76,11 @@ class _SettingState extends State<Setting> {
             ),
             Card(
               child: ListTile(
-                title: Text("Edit Profile"),
+                title: Text("Update Profile Picture"),
                 onTap: (){
-                  print("Working");
-                  Navigator.push(context, MaterialPageRoute( builder:(context) => EditProfile()));
+                  Fluttertoast.showToast(msg: "Not Avilable");
+                  /*print("Working");
+                  Navigator.push(context, MaterialPageRoute( builder:(context) => EditProfile()));*/
                 },
               ),
             ),
