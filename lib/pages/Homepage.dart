@@ -1,4 +1,5 @@
 import 'package:college_services/pages/profile.dart';
+import 'package:college_services/services/fullscreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -101,9 +102,7 @@ bool userFlag = false;
               stream: UserManagement().getPosts(widget.postId),
               builder: (_, doc) {
                 if (doc.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return Container();
                 } else {
                   final List<DocumentSnapshot> documents = doc.data.documents;
                   return ListView.builder(
@@ -174,22 +173,30 @@ bool userFlag = false;
                                                .data["Image Urls"].length;i++){
                                              _listOfImages.add(NetworkImage(documents[indexs]
                                                  .data["Image Urls"][i]));
-                                             return Container(
-                                               width: 400,
-                                               height: 400,
-                                               child: Image.network(
-                                                   documents[indexs]
-                                                   .data["Image Urls"][index],
-                                                 loadingBuilder:(BuildContext context, Widget child,ImageChunkEvent loadingProgress) {
-                                                   if (loadingProgress == null) return child;
-                                                   return Center(
-                                                     child: CircularProgressIndicator(
-                                                       value: loadingProgress.expectedTotalBytes != null ?
-                                                       loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                                                           : null,
-                                                     ),
-                                                   );
-                                                 },
+                                             return GestureDetector(
+                                               onTap: (){
+                                                 Navigator.push(context, MaterialPageRoute(builder: (_) {
+                                                   return FullScreen(imageURL: documents[indexs]
+                                                       .data["Image Urls"][index]);
+                                                 }));
+                                               },
+                                               child: Container(
+                                                 width: 400,
+                                                 height: 400,
+                                                 child: Image.network(
+                                                     documents[indexs]
+                                                     .data["Image Urls"][index],
+                                                   loadingBuilder:(BuildContext context, Widget child,ImageChunkEvent loadingProgress) {
+                                                     if (loadingProgress == null) return child;
+                                                     return Center(
+                                                       child: CircularProgressIndicator(
+                                                         value: loadingProgress.expectedTotalBytes != null ?
+                                                         loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
+                                                             : null,
+                                                       ),
+                                                     );
+                                                   },
+                                                 ),
                                                ),
                                              );
                                            }

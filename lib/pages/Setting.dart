@@ -108,6 +108,22 @@ class _SettingState extends State<Setting> {
                 ),
               ),
             ),
+            SizedBox(height: 20,),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                "Downloads",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            Card(
+              child: ListTile(
+                title: Text("/storage/emulated/0/Download"),
+              ),
+            ),
           ],
         ),
       ) : Center(child: CircularProgressIndicator()),

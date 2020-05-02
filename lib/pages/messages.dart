@@ -46,10 +46,21 @@ class _MessagesState extends State<Messages> {
                   );
                 }
                 else{
-                      return ListView.builder(
-                        padding: EdgeInsets.all(8.0),
-                        itemBuilder: (context,index) => buildItem(context,snapshot.data.documents[index]),
-                        itemCount: snapshot.data.documents.length,
+                      return Container(
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(top:15.0),
+                              child: Text("All users",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800,),),
+                            ),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.all(8.0),
+                          itemBuilder: (context,index) => buildItem(context,snapshot.data.documents[index]),
+                          itemCount: snapshot.data.documents.length,
+                        ),
+                          ],
+                        ),
                       );
                 }
               },

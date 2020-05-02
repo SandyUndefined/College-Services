@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'dart:typed_data';
 import 'package:college_services/services/usermanagement.dart';
@@ -77,6 +77,7 @@ class _UploadState extends State<Upload> {
     }
     else if(pdf){
       print("Pdf");
+      Fluttertoast.showToast(msg: "Not Avilable");
     }
     else{
       print("select a type");
@@ -133,18 +134,6 @@ class _UploadState extends State<Upload> {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
     pr = new ProgressDialog(context, type: ProgressDialogType.Normal);
-    pr.style(
-      message: 'Please wait...',
-      borderRadius: 10.0,
-      backgroundColor: Colors.white,
-      progressWidget: CircularProgressIndicator(),
-      elevation: 10.0,
-      insetAnimCurve: Curves.easeInOut,
-      progressTextStyle: TextStyle(
-          color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
-      messageTextStyle: TextStyle(
-          color: Colors.black, fontSize: 16.0, fontWeight: FontWeight.w600),
-    );
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -351,6 +340,7 @@ class _UploadState extends State<Upload> {
       onPressed: () {
         if (Des != null) {
           print('ho gya ');
+          pr.style(message: "Post uploading...");
              pr.show();
               print('Pic uploading');
               UploadImages();
@@ -393,7 +383,7 @@ class _UploadState extends State<Upload> {
     print("object");
     DateTime date = new DateTime.now();
     var Date = DateFormat('EEE d MMM kk:mm:ss').format(date);
-    ByteData byteData = await asset.getByteData(quality: 60);
+    ByteData byteData = await asset.getByteData(quality: 55);
     List<int> imageData = byteData.buffer.asUint8List();
     StorageReference storageRef = FirebaseStorage.instance.ref().child("User Posts").child('$PhoneNumber').child('$Date').child('$date');
     StorageUploadTask uploadTask = storageRef.putData(imageData);
