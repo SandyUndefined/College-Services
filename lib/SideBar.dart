@@ -11,6 +11,7 @@ import 'package:college_services/services/usermanagement.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SideBar extends StatefulWidget {
   @override
@@ -278,6 +279,7 @@ class _SideBarState extends State<SideBar> {
       ),
       onTap: () {
         print('Notice is not working for now');
+        Fluttertoast.showToast(msg: "Not Avilable");
         /*Navigator.push(context, MaterialPageRoute(builder: (context) => new HomePage()));*/
       },
     );

@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:college_services/services/usermanagement.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_image_picker/multi_image_picker.dart';
 
@@ -271,7 +272,9 @@ bool userFlag = false;
                                     ),
                                     Expanded(
                                       child: IconButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Fluttertoast.showToast(msg: "Not Avilable");
+                                        },
                                         icon: Icon(
                                           Icons.near_me,
                                           color: Colors.blue,
@@ -611,6 +614,7 @@ class _ListPageState extends State<ListPage> {
                                     child: IconButton(
                                       onPressed: () {
                                         print("share");
+                                        Fluttertoast.showToast(msg: "Not Avilable");
                                       },
                                       icon: Icon(
                                         Icons.near_me,
