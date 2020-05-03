@@ -7,7 +7,6 @@ import 'authentication.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return AuthProvider(
@@ -15,11 +14,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primaryColor: Color.fromRGBO(255,188,114, 1),
+          primaryColor: Color.fromRGBO(255, 188, 114, 1),
         ),
         home: Wrapper(),
       ),
     );
   }
 }
-

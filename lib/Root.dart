@@ -16,13 +16,22 @@ class _RootPageState extends State<RootPage> {
       resizeToAvoidBottomPadding: false,
       body: Container(
         color: Colors.white,
-        padding: EdgeInsets.only(top: 150.0, right: 48.0, left: 48.0, bottom: 20.0),
+        padding:
+            EdgeInsets.only(top: 150.0, right: 48.0, left: 48.0, bottom: 20.0),
         child: Column(
           children: <Widget>[
-            new Image.asset('assets/images/example.png',height: 170, width: 170,),
-            SizedBox(height: 50.0,),
+            new Image.asset(
+              'assets/images/example.png',
+              height: 170,
+              width: 170,
+            ),
+            SizedBox(
+              height: 50.0,
+            ),
             buildLogInButton(),
-            SizedBox(height: 30.0,),
+            SizedBox(
+              height: 30.0,
+            ),
             buildSignUpButton(),
           ],
         ),
@@ -30,16 +39,20 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
-  Widget buildLogInButton(){
+  Widget buildLogInButton() {
     return RaisedButton(
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-      color: Color.fromRGBO(0,21,43,1),
-      onPressed: (){
-        Navigator.push(context,
-          MaterialPageRoute(builder: (context) => LogIn()),);
+      color: Color.fromRGBO(0, 21, 43, 1),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LogIn()),
+        );
       },
       textColor: Colors.white,
-      shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
       child: Center(
         child: Text(
           "Log In",
@@ -51,16 +64,20 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
-  Widget buildSignUpButton(){
+  Widget buildSignUpButton() {
     return RaisedButton(
       padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
-      color: Color.fromRGBO(255,188,114, 1),
-      onPressed: (){
-        Navigator.push(context,
-          MaterialPageRoute(builder: (context) => signup()),);
+      color: Color.fromRGBO(255, 188, 114, 1),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => signup()),
+        );
       },
       textColor: Colors.black,
-      shape:RoundedRectangleBorder( borderRadius: BorderRadius.circular(15.0),),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
       child: Center(
         child: Text(
           "Sign Up",

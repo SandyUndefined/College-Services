@@ -8,7 +8,8 @@ class Exams extends StatefulWidget {
 
 class _ExamsState extends State<Exams> {
   FlutterWebviewPlugin flutterWebviewPlugin = FlutterWebviewPlugin();
-  var urlString = "https://makaut1.ucanapply.com/smartexam/public/routine-details";
+  var urlString =
+      "https://makaut1.ucanapply.com/smartexam/public/routine-details";
 
   @override
   void initState() {
@@ -22,7 +23,9 @@ class _ExamsState extends State<Exams> {
   Widget build(BuildContext context) {
     return WebviewScaffold(
       appBar: AppBar(
-        title: Text("Exam Schedule",),
+        title: Text(
+          "Exam Schedule",
+        ),
       ),
       url: urlString,
       hidden: true,

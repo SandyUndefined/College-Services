@@ -17,7 +17,7 @@ class MyPosts extends StatefulWidget {
 
 class _MyPostsState extends State<MyPosts> {
   Future _data;
-  String usersID, userID,Name, UserUrl, Des;
+  String usersID, userID, Name, UserUrl, Des;
   bool userFlag = false;
   var users, creationTime;
 
@@ -37,14 +37,14 @@ class _MyPostsState extends State<MyPosts> {
     });
   }
 
-  navigateToDetail(String postId, String uid,String name) {
+  navigateToDetail(String postId, String uid, String name) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => DetailPage(
-              postId: postId,
+                  postId: postId,
                   uid: uid,
-              name: name,
+                  name: name,
                 )));
   }
 
@@ -58,16 +58,23 @@ class _MyPostsState extends State<MyPosts> {
       ),
       body: Container(
         child: StreamBuilder<QuerySnapshot>(
-            stream:UserManagement().getmyPosts(userID,usersID) ,
+            stream: UserManagement().getmyPosts(userID, usersID),
             builder: (_, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
-              }else {
-                final List<DocumentSnapshot> documents = snapshot.data.documents;
-                if(documents.length == 0){
-                  return Center(child: Text("Nothing to show",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),),);
+              } else {
+                final List<DocumentSnapshot> documents =
+                    snapshot.data.documents;
+                if (documents.length == 0) {
+                  return Center(
+                    child: Text(
+                      "Nothing to show",
+                      style:
+                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                    ),
+                  );
                 }
                 return ListView.builder(
                     itemCount: documents.length,
@@ -81,7 +88,6 @@ class _MyPostsState extends State<MyPosts> {
                               documents[index].data['Postid'],
                               documents[index].data["Userid"],
                               documents[index].data["Name"],
-
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +100,8 @@ class _MyPostsState extends State<MyPosts> {
                                       height: 45,
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
-                                          image: NetworkImage(documents[index].data["User Pic"]),
+                                          image: NetworkImage(documents[index]
+                                              .data["User Pic"]),
                                           fit: BoxFit.cover,
                                         ),
                                         borderRadius: BorderRadius.all(
@@ -112,36 +119,55 @@ class _MyPostsState extends State<MyPosts> {
                                         ),
                                       ),
                                     ),
-                                   usersID == documents[index].data["Userid"] ? PopupMenuButton(
-                                      elevation:3.2,
-                                      itemBuilder: (BuildContext context) => [
-                                          PopupMenuItem(
-                                            child: ListTile(
-                                              title: Text("Delete"),
-                                              onTap: () {
-                                                Navigator.of(context).pop();
-                                                return showDialog(
-                                                    context: context,
-                                                  builder: (BuildContext context){
-                                                    return AlertDialog(
-                                                      elevation: 24.0,
-                                                      content: Text("Are you sure you want to delete this post?"),
-                                                      actions: <Widget>[
-                                                        FlatButton(child: Text("No"),onPressed: (){
-                                                          Navigator.of(context).pop();
-                                                        },),
-                                                        FlatButton(child: Text("Yes"),onPressed: () async {
-                                                         await UserManagement().deleteData(documents[index].data['Postid']);
-                                                          Navigator.of(context).pop();
-                                                        },),
-                                                      ],
-                                                    );
-                                                  }
-                                                );
-                                            },)
-                                          ),
-                                        ],
-                                    ) : Container(),
+                                    usersID == documents[index].data["Userid"]
+                                        ? PopupMenuButton(
+                                            elevation: 3.2,
+                                            itemBuilder:
+                                                (BuildContext context) => [
+                                              PopupMenuItem(
+                                                  child: ListTile(
+                                                title: Text("Delete"),
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  return showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return AlertDialog(
+                                                          elevation: 24.0,
+                                                          content: Text(
+                                                              "Are you sure you want to delete this post?"),
+                                                          actions: <Widget>[
+                                                            FlatButton(
+                                                              child: Text("No"),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            ),
+                                                            FlatButton(
+                                                              child:
+                                                                  Text("Yes"),
+                                                              onPressed:
+                                                                  () async {
+                                                                await UserManagement()
+                                                                    .deleteData(
+                                                                        documents[index]
+                                                                            .data['Postid']);
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            ),
+                                                          ],
+                                                        );
+                                                      });
+                                                },
+                                              )),
+                                            ],
+                                          )
+                                        : Container(),
                                   ],
                                 ),
                                 Padding(
@@ -149,7 +175,8 @@ class _MyPostsState extends State<MyPosts> {
                                       EdgeInsets.only(left: 60, bottom: 10),
                                   child: Text(
                                     DateFormat.yMMMd().add_jm().format(
-                                        DateTime.parse(documents[index].data["Creation Time"]
+                                        DateTime.parse(documents[index]
+                                            .data["Creation Time"]
                                             .toDate()
                                             .toString())),
                                     style: TextStyle(
@@ -186,50 +213,61 @@ class _MyPostsState extends State<MyPosts> {
                                         children: <Widget>[
                                           IconButton(
                                               onPressed: () async {
-                                                if (documents[index].data['Likes']
-                                                [userID] !=
+                                                if (documents[index]
+                                                            .data['Likes']
+                                                        [userID] !=
                                                     true) {
                                                   await UserManagement()
                                                       .updateLikes(
-                                                      documents[index]
-                                                          .data['Postid']);
+                                                          documents[index]
+                                                              .data['Postid']);
                                                 } else {
                                                   await UserManagement()
                                                       .updateDislike(
-                                                      documents[index]
-                                                          .data['Postid']);
+                                                          documents[index]
+                                                              .data['Postid']);
                                                 }
                                               },
-                                              icon: documents[index].data['Likes']
-                                              [userID] ==
-                                                  true
+                                              icon: documents[index]
+                                                              .data['Likes']
+                                                          [userID] ==
+                                                      true
                                                   ? Icon(Icons.favorite,
-                                                  color: Colors.redAccent,
-                                                  size: 23.0)
+                                                      color: Colors.redAccent,
+                                                      size: 23.0)
                                                   : Icon(Icons.favorite_border,
-                                                  color: Colors.redAccent,
-                                                  size: 23.0)
-                                          ),
+                                                      color: Colors.redAccent,
+                                                      size: 23.0)),
                                           documents[index].data['Likes']
-                                          ['Like Count'] ==
-                                              0
+                                                      ['Like Count'] ==
+                                                  0
                                               ? Text("")
-                                              : Text(documents[index]
-                                              .data['Likes']['Like Count']
-                                              .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
+                                              : Text(
+                                                  documents[index]
+                                                      .data['Likes']
+                                                          ['Like Count']
+                                                      .toString(),
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w700),
+                                                )
                                         ],
                                       ),
                                     ),
                                     Expanded(
                                       child: Padding(
-                                        padding: const EdgeInsets.only(left:15.0),
+                                        padding:
+                                            const EdgeInsets.only(left: 15.0),
                                         child: Row(
                                           children: <Widget>[
                                             IconButton(
                                               onPressed: () {
                                                 navigateToDetail(
-                                                  documents[index].data["Postid"],
-                                                  documents[index].data["Userid"],
+                                                  documents[index]
+                                                      .data["Postid"],
+                                                  documents[index]
+                                                      .data["Userid"],
                                                   documents[index].data["Name"],
                                                 );
                                               },
@@ -239,13 +277,19 @@ class _MyPostsState extends State<MyPosts> {
                                                 size: 23.0,
                                               ),
                                             ),
-                                            documents[index].data
-                                            ['Comment Count'] ==
-                                                0
+                                            documents[index].data[
+                                                        'Comment Count'] ==
+                                                    0
                                                 ? Text("")
-                                                : Text(documents[index]
-                                                .data['Comment Count']
-                                                .toString(),style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),)
+                                                : Text(
+                                                    documents[index]
+                                                        .data['Comment Count']
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                                  )
                                           ],
                                         ),
                                       ),

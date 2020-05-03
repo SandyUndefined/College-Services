@@ -8,7 +8,8 @@ class Results extends StatefulWidget {
 
 class _ResultsState extends State<Results> {
   FlutterWebviewPlugin flutterWebviewPlugin = FlutterWebviewPlugin();
-  var urlString = "https://makaut1.ucanapply.com/smartexam/public/result-details";
+  var urlString =
+      "https://makaut1.ucanapply.com/smartexam/public/result-details";
 
   @override
   void initState() {
@@ -22,7 +23,9 @@ class _ResultsState extends State<Results> {
   Widget build(BuildContext context) {
     return WebviewScaffold(
       appBar: AppBar(
-        title: Text("Results",),
+        title: Text(
+          "Results",
+        ),
       ),
       url: urlString,
       hidden: true,

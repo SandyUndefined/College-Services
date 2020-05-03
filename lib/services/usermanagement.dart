@@ -5,10 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:uuid/uuid.dart';
-import 'package:intl/intl.dart';
 
 class UserManagement {
-
   String uid;
   bool showPassword = true;
 
@@ -49,10 +47,15 @@ class UserManagement {
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     print('Current user $userId');
     if (userID != null) {
-      return await Firestore.instance.collection('users').document(userID).get();
-    }
-    else {
-      return await Firestore.instance.collection('users').document(userId).get();
+      return await Firestore.instance
+          .collection('users')
+          .document(userID)
+          .get();
+    } else {
+      return await Firestore.instance
+          .collection('users')
+          .document(userId)
+          .get();
     }
   }
 
@@ -69,17 +72,17 @@ class UserManagement {
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
     Firestore.instance.collection('/Posts').document('$PostID').setData({
       'Creation Time': date,
-      'Postid':PostID,
+      'Postid': PostID,
       'Name': Name,
       'Userid': userId,
       'Likes': {
-          'Like Count': 0,
+        'Like Count': 0,
       },
-        'Comment Count' : 0,
+      'Comment Count': 0,
       'User Pic': UserImageUrl,
       'Image Urls': Urls,
       'Description': Des,
-    }).then((value){
+    }).then((value) {
       Navigator.of(context).pop();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
@@ -89,8 +92,10 @@ class UserManagement {
   }
 
   Stream<QuerySnapshot> getPostsStream() {
-    return Firestore.instance.collection("Posts").orderBy(
-        "Creation Time", descending: true).snapshots();
+    return Firestore.instance
+        .collection("Posts")
+        .orderBy("Creation Time", descending: true)
+        .snapshots();
   }
 
   /*getmyPosts(userID)async{
@@ -110,18 +115,24 @@ class UserManagement {
 
   }*/
 
-  Stream<QuerySnapshot> getmyPosts(userID,currentID){
+  Stream<QuerySnapshot> getmyPosts(userID, currentID) {
     print('This is in Usermanagement $userID');
     print(getCurrentUser());
     /*print('Current user $userId');*/
     if (userID != null) {
-      return Firestore.instance.collection("Posts").where("Userid", isEqualTo: userID).orderBy("Creation Time", descending: true).snapshots();
-    }
-    else {
-      return Firestore.instance.collection("Posts").where("Userid", isEqualTo: currentID).orderBy("Creation Time", descending: true).snapshots();
+      return Firestore.instance
+          .collection("Posts")
+          .where("Userid", isEqualTo: userID)
+          .orderBy("Creation Time", descending: true)
+          .snapshots();
+    } else {
+      return Firestore.instance
+          .collection("Posts")
+          .where("Userid", isEqualTo: currentID)
+          .orderBy("Creation Time", descending: true)
+          .snapshots();
     }
   }
-
 
   storeMessages(UserID, peerId, content) async {
     List<DocumentSnapshot> templist;
@@ -133,88 +144,101 @@ class UserManagement {
         .collection('Messages')
         .document(UserID) // sender From == current
         .collection(peerId) // receiver  To == PeerID
-        .document(DateTime
-        .now()
-        .millisecondsSinceEpoch
-        .toString()).setData({
+        .document(DateTime.now().millisecondsSinceEpoch.toString())
+        .setData({
       'From': UserID,
       'To': peerId,
       'Content': content,
-      'Time Stamp': DateTime
-          .now()
-          .millisecondsSinceEpoch
-          .toString(),
+      'Time Stamp': DateTime.now().millisecondsSinceEpoch.toString(),
     });
     Firestore.instance
         .collection('Messages')
         .document(peerId)
         .collection(UserID)
-        .document(DateTime
-        .now()
-        .millisecondsSinceEpoch
-        .toString()).setData({
+        .document(DateTime.now().millisecondsSinceEpoch.toString())
+        .setData({
       'From': UserID,
       'To': peerId,
       'Content': content,
-      'Time Stamp': DateTime
-          .now()
-          .millisecondsSinceEpoch
-          .toString(),
+      'Time Stamp': DateTime.now().millisecondsSinceEpoch.toString(),
     });
   }
 
-  updateShowPassword(Id,value) async{
-    await Firestore
-        .instance
+  updateShowPassword(Id, value) async {
+    await Firestore.instance
         .collection('users')
         .document(Id)
+        .updateData({'Show Password': value});
+  }
+
+  updateLikes(Postid) async {
+    String userId = (await FirebaseAuth.instance.currentUser()).uid;
+    await Firestore.instance
+        .collection('Posts')
+        .document('$Postid')
         .updateData({
-      'Show Password' : value
+      'Likes.Like Count': FieldValue.increment(1),
+      'Likes.$userId': true,
     });
   }
-  updateLikes(Postid)async{
+
+  updateDislike(Postid) async {
     String userId = (await FirebaseAuth.instance.currentUser()).uid;
-    await Firestore.instance.collection('Posts').document('$Postid').updateData({
-          'Likes.Like Count': FieldValue.increment(1),
-          'Likes.$userId': true,
-    });
-  }
-  updateDislike(Postid) async{
-    String userId = (await FirebaseAuth.instance.currentUser()).uid;
-    await Firestore.instance.collection('Posts').document('$Postid').updateData({
+    await Firestore.instance
+        .collection('Posts')
+        .document('$Postid')
+        .updateData({
       'Likes.Like Count': FieldValue.increment(-1),
       'Likes.$userId': false,
     });
   }
+
   Stream<QuerySnapshot> getPosts(PostId) {
-    return Firestore.instance.collection("Posts").where("Postid", isEqualTo: PostId).snapshots();
+    return Firestore.instance
+        .collection("Posts")
+        .where("Postid", isEqualTo: PostId)
+        .snapshots();
   }
-  addComments(content,Postid,userPic,name) async {
+
+  addComments(content, Postid, userPic, name) async {
     var date = new DateTime.now();
-    await Firestore.instance.collection('Posts').document('$Postid').updateData(
-        {
+    await Firestore.instance
+        .collection('Posts')
+        .document('$Postid')
+        .updateData({
       'Comment Count': FieldValue.increment(1),
-    }
-    );
+    });
     await Firestore.instance
         .collection('/Posts')
         .document('$Postid')
         .collection("Comments")
-        .document('$date').setData({'Comment' : content, 'Time Stamp': date,'Name':name,'Image Url':userPic});
+        .document('$date')
+        .setData({
+      'Comment': content,
+      'Time Stamp': date,
+      'Name': name,
+      'Image Url': userPic
+    });
   }
 
   Stream<QuerySnapshot> getCommentsStream(PostId) {
-    return Firestore.instance.collection("Posts").document('$PostId').collection('Comments').orderBy(
-        'Time Stamp', descending: true).snapshots();
+    return Firestore.instance
+        .collection("Posts")
+        .document('$PostId')
+        .collection('Comments')
+        .orderBy('Time Stamp', descending: true)
+        .snapshots();
   }
 
   deleteData(docId) async {
-  await Firestore.instance.collection('Posts').where("Postid", isEqualTo: docId).getDocuments().then((snapshot) {
-     for (DocumentSnapshot doc in snapshot.documents) {
-       doc.reference.delete();
-     }
-   });
+    await Firestore.instance
+        .collection('Posts')
+        .where("Postid", isEqualTo: docId)
+        .getDocuments()
+        .then((snapshot) {
+      for (DocumentSnapshot doc in snapshot.documents) {
+        doc.reference.delete();
+      }
+    });
   }
-
-
 }

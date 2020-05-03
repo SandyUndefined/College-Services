@@ -457,7 +457,7 @@ class _ListPageState extends State<ListPage> {
             } else {
               final List<DocumentSnapshot> documents = snapshot.data.documents;
               if(documents.length == 0){
-                return Center(child: Text("Nothing to show",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),),);
+                return Center(child: Text("Wow, such empty",style: TextStyle(fontSize: 14,fontWeight: FontWeight.w700),),);
               }
               return ListView.builder(
                   itemCount: documents.length,

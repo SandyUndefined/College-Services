@@ -19,10 +19,12 @@ class _EventState extends State<Event> {
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return WebviewScaffold(
       appBar: AppBar(
-        title: Text("Events",),
+        title: Text(
+          "Events",
+        ),
       ),
       url: urlString,
       hidden: true,

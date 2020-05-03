@@ -51,7 +51,7 @@ class _MessagesState extends State<Messages> {
                           children: <Widget>[
                             Padding(
                               padding: const EdgeInsets.only(top:15.0),
-                              child: Text("All users",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800,),),
+                              child: Text("All Users",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800,),),
                             ),
                         ListView.builder(
                           shrinkWrap: true,

@@ -19,10 +19,12 @@ class _QuestionPaperState extends State<QuestionPaper> {
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return WebviewScaffold(
       appBar: AppBar(
-        title: Text("Exam Schedule",),
+        title: Text(
+          "Exam Schedule",
+        ),
       ),
       url: urlString,
       hidden: true,

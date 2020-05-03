@@ -11,7 +11,8 @@ import 'package:multi_image_picker/multi_image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 class Item {
-  const Item(this.name,this.icon);
+  const Item(this.name, this.icon);
+
   final String name;
   final Icon icon;
 }
@@ -34,7 +35,7 @@ class _UploadState extends State<Upload> {
   String _error = 'No Error Dectected';
   double _height;
   double _width;
-  bool userFlag = false,images= false,pdf=false;
+  bool userFlag = false, images = false, pdf = false;
   Item selectedtype;
   var users;
   Uint8List image;
@@ -43,9 +44,17 @@ class _UploadState extends State<Upload> {
   String userId, Name, PhoneNumber, UserImageUrl;
   ProgressDialog pr;
 
-  List <Item>type = <Item>[
-    const Item('Images', Icon(Icons.image,)),
-    const Item('Pdf', Icon(Icons.picture_as_pdf,)),
+  List<Item> type = <Item>[
+    const Item(
+        'Images',
+        Icon(
+          Icons.image,
+        )),
+    const Item(
+        'Pdf',
+        Icon(
+          Icons.picture_as_pdf,
+        )),
   ];
 
   @override
@@ -71,32 +80,32 @@ class _UploadState extends State<Upload> {
   }
 
   void _chooseFiles() async {
-    if(images){
+    if (images) {
       loadAssets();
       print("Images");
-    }
-    else if(pdf){
+    } else if (pdf) {
       print("Pdf");
       Fluttertoast.showToast(msg: "Not Avilable");
-    }
-    else{
+    } else {
       print("select a type");
     }
   }
 
   Widget buildGridView() {
-      return Selectedimages.length != 0 ? GridView.count(
-        shrinkWrap: true,
-        crossAxisCount: 4,
-        children: List.generate(Selectedimages.length, (index) {
-          Asset asset = Selectedimages[index];
-          return AssetThumb(
-            asset: asset,
-            width: 300,
-            height: 300,
-          );
-        }),
-      ) : Container();
+    return Selectedimages.length != 0
+        ? GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 4,
+            children: List.generate(Selectedimages.length, (index) {
+              Asset asset = Selectedimages[index];
+              return AssetThumb(
+                asset: asset,
+                width: 300,
+                height: 300,
+              );
+            }),
+          )
+        : Container();
   }
 
   Future<void> loadAssets() async {
@@ -141,31 +150,29 @@ class _UploadState extends State<Upload> {
       ),
       body: userFlag
           ? SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-              userData(),
-              SizedBox(
-                height: 30,
-              ),
-              desBox(),
-              SizedBox(
-                height: 30,
-              ),
-              ChooseFiles(),
-              SizedBox(
-                height: 50,
-              ),
-                  Flexible(child: buildGridView()),
-                  SizedBox(
-                height: 30,
-              ),
-              postButton(),
-              SizedBox(
-                height: 30,
-              ),
-            ]),
-          )
+              child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                userData(),
+                SizedBox(
+                  height: 30,
+                ),
+                desBox(),
+                SizedBox(
+                  height: 30,
+                ),
+                ChooseFiles(),
+                SizedBox(
+                  height: 50,
+                ),
+                Flexible(child: buildGridView()),
+                SizedBox(
+                  height: 30,
+                ),
+                postButton(),
+                SizedBox(
+                  height: 30,
+                ),
+              ]),
+            )
           : new Container(
               child: Center(child: CircularProgressIndicator()),
             ),
@@ -254,19 +261,16 @@ class _UploadState extends State<Upload> {
               ),
               color: Color.fromRGBO(241, 243, 243, 1),
               onPressed: () {
-               try{
-                 if(selectedtype == null){
-                   _scaffoldKey.currentState.showSnackBar(new SnackBar(
-                       content: new Text("Please Select File type")
-                   ));
-                 }
-                 else{
-                   _chooseFiles();
-                 }
-               }
-               catch(e){
-                 print(e);
-               }
+                try {
+                  if (selectedtype == null) {
+                    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+                        content: new Text("Please Select File type")));
+                  } else {
+                    _chooseFiles();
+                  }
+                } catch (e) {
+                  print(e);
+                }
               },
               textColor: Colors.black45,
               padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
@@ -295,31 +299,30 @@ class _UploadState extends State<Upload> {
             onChanged: (Item Value) {
               setState(() {
                 selectedtype = Value;
-                if(selectedtype.name == 'Images'){
+                if (selectedtype.name == 'Images') {
                   print("images");
                   setState(() {
                     pdf = false;
-                    images=true;
+                    images = true;
                   });
-                }
-                else if (selectedtype.name == 'Pdf'){
+                } else if (selectedtype.name == 'Pdf') {
                   print("pdf");
                   pdf = true;
-                  images=false;
-                }
-                else{
+                  images = false;
+                } else {
                   print("null");
                 }
-
               });
             },
-            items: type.map((Item type){
+            items: type.map((Item type) {
               return DropdownMenuItem<Item>(
                 value: type,
                 child: Row(
                   children: <Widget>[
                     type.icon,
-                    SizedBox(width: 5,),
+                    SizedBox(
+                      width: 5,
+                    ),
                     Text(type.name),
                   ],
                 ),
@@ -339,20 +342,18 @@ class _UploadState extends State<Upload> {
       color: Color.fromRGBO(0, 21, 43, 1),
       onPressed: () {
         if (Des != null) {
-          if(images){
-          print('ho gya ');
-          pr.style(message: "Post uploading...");
-             pr.show();
-              print('Pic uploading');
-              UploadImages();
-          }
-          else{
+          if (images) {
+            print('ho gya ');
+            pr.style(message: "Post uploading...");
+            pr.show();
+            print('Pic uploading');
+            UploadImages();
+          } else {
             Fluttertoast.showToast(msg: "Not Avilable");
           }
         } else {
-          _scaffoldKey.currentState.showSnackBar(new SnackBar(
-              content: new Text("Please Enter Description")
-          ));
+          _scaffoldKey.currentState.showSnackBar(
+              new SnackBar(content: new Text("Please Enter Description")));
         }
       },
       textColor: Colors.white,
@@ -370,15 +371,16 @@ class _UploadState extends State<Upload> {
     );
   }
 
-  void UploadImages(){
-    for(var imageFile in Selectedimages){
+  void UploadImages() {
+    for (var imageFile in Selectedimages) {
       uploadToFirebase(imageFile).then((downloadUrl) {
         uploadUrls.add(downloadUrl.toString());
-        if(uploadUrls.length == Selectedimages.length){
+        if (uploadUrls.length == Selectedimages.length) {
           print("This is in if else $uploadUrls");
-          UserManagement().addPost(Name,Des,UserImageUrl,uploadUrls,PhoneNumber, context);
+          UserManagement().addPost(
+              Name, Des, UserImageUrl, uploadUrls, PhoneNumber, context);
         }
-      }).catchError((onError){
+      }).catchError((onError) {
         print("This is error $onError");
       });
     }
@@ -390,10 +392,14 @@ class _UploadState extends State<Upload> {
     var Date = DateFormat('EEE d MMM kk:mm:ss').format(date);
     ByteData byteData = await asset.getByteData(quality: 55);
     List<int> imageData = byteData.buffer.asUint8List();
-    StorageReference storageRef = FirebaseStorage.instance.ref().child("User Posts").child('$PhoneNumber').child('$Date').child('$date');
+    StorageReference storageRef = FirebaseStorage.instance
+        .ref()
+        .child("User Posts")
+        .child('$PhoneNumber')
+        .child('$Date')
+        .child('$date');
     StorageUploadTask uploadTask = storageRef.putData(imageData);
     StorageTaskSnapshot storageTaskSnapshot = await uploadTask.onComplete;
     return storageTaskSnapshot.ref.getDownloadURL();
   }
- }
-
+}
