@@ -150,7 +150,7 @@ class _SettingState extends State<Setting> {
                   ),
                   Card(
                     child: ListTile(
-                      title: Text("/storage/emulated/0/Download"),
+                      title: Text("/storage/emulated/0/Pictures/College Services"),
                     ),
                   ),
                 ],

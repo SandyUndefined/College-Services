@@ -11,7 +11,7 @@ class SignUpCompletePage extends StatelessWidget {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Color.fromRGBO(221, 234, 247, 1),
+      backgroundColor: Color.fromRGBO(225, 225, 225, 1),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -19,32 +19,31 @@ class SignUpCompletePage extends StatelessWidget {
             Image.asset(
               "assets/images/success.png",
               fit: BoxFit.cover,
-              width: 150,
-              height: 150,
+              width: 140,
+              height: 140,
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 25.0),
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                color: Color.fromRGBO(0, 21, 43, 1),
-                child: Container(
-                    alignment: Alignment.center,
-                    width: _width / 3,
-                    height: _height / 12,
-                    child: Text(
-                      "LogIn",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600),
-                    )),
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LogIn()));
-                },
+            SizedBox(height: 35,),
+            RaisedButton(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
               ),
+              color: Color.fromRGBO(0, 21, 43, 1),
+              child: Container(
+                  alignment: Alignment.center,
+                  width: _width / 3,
+                  height: _height / 12,
+                  child: Text(
+                    "LogIn",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600),
+                  )),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LogIn()));
+              },
             ),
           ],
         ),

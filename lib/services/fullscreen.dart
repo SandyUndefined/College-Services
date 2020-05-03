@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:downloads_path_provider/downloads_path_provider.dart';
+import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,12 +24,11 @@ class _FullScreenState extends State<FullScreen> {
     var url = widget.imageURL;
     print(url);
     var response = await get(url);
-    var documentDirectory = await DownloadsPathProvider
-        .downloadsDirectory; // For Intrenal storage  /storage/emulated/0/Download
+    var documentDirectory = await ExtStorage.getExternalStoragePublicDirectory(ExtStorage.DIRECTORY_PICTURES); // For Intrenal storage  /storage/emulated/0/Pictures/College Services
     print(documentDirectory);
-    var firstPath = documentDirectory.path;
+    var firstPath = documentDirectory + '/College Services';
     print(firstPath);
-    var filePathAndName = documentDirectory.path + '/img_${i++}.jpg';
+    var filePathAndName = documentDirectory + '/College Services/img_${i++}.jpg';
     print(filePathAndName);
     await Directory(firstPath).create(recursive: true);
     File file2 = new File(filePathAndName);

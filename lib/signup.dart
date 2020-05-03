@@ -639,11 +639,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   String validateName(String value) {
     if (value.isNotEmpty) {
-      if (isAlpha(value)) {
+      return null;
+      /*if (isAlpha(value) && value.contains(' ')) {
         return null;
       } else {
         return 'Please enter a valid name';
-      }
+      }*/
     } else {
       return 'Please enter a name';
     }

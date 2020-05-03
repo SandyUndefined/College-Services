@@ -463,7 +463,7 @@ class _SideBarState extends State<SideBar> {
   }
 
   void Logout() async {
-    _firebaseAuth.signOut();
+   await _firebaseAuth.signOut();
     Navigator.of(context).pop();
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => new LogIn()));
