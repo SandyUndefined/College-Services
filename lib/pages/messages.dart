@@ -36,7 +36,7 @@ class _MessagesState extends State<Messages> {
       ),
       body: Stack(
         children:<Widget>[
-          Container(
+          SingleChildScrollView(
             child: StreamBuilder(
               stream: Firestore.instance.collection('users').orderBy("Name", descending: false).snapshots(),
               builder: (context,snapshot){
@@ -54,6 +54,7 @@ class _MessagesState extends State<Messages> {
                               child: Text("All Users",style: TextStyle(fontSize: 20,fontWeight: FontWeight.w800,),),
                             ),
                         ListView.builder(
+                          physics: ScrollPhysics(),
                           shrinkWrap: true,
                           padding: EdgeInsets.all(8.0),
                           itemBuilder: (context,index) => buildItem(context,snapshot.data.documents[index]),

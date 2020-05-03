@@ -272,6 +272,7 @@ class _LogInScreenState extends State<LogInScreen> {
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
       }).catchError((error) {
+        pr.hide();
         final snackBar = SnackBar(
           content: Text(error.message),
           action: SnackBarAction(
