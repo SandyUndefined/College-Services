@@ -42,7 +42,7 @@ class _MessagesState extends State<Messages> {
               builder: (context,snapshot){
                 if(!snapshot.hasData){
                   return Center(
-                    child: CircularProgressIndicator(),
+                    child: Container(),
                   );
                 }
                 else{
