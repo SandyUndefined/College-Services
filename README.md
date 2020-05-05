@@ -11,9 +11,9 @@
 3. honor 8x(Kouveri).
 4. Galaxy J7(Mine).
 5. Sylvester
-6. Sonam
-7. Mi Note 7
-8. Akash
+6. Nokia 6.1 plus(Sonam)
+7. Mi Note 7(Anindita)
+8. Android 9(Akash)
 
 
 ## To Do
@@ -26,6 +26,8 @@
 - [ ] Use app bundles or split the APK to reduce the APK size
 - [ ] set a launcher icon.
 - [ ] Enhance UI.
+- [ ] Able to delete account.
+
 
 ***Sign Up***
 
@@ -60,6 +62,7 @@
 - [ ] Block method implementation.
 - [ ] Link validator
 - [ ] send images also(if possible)
+- [ ] Delete Messages option.
 
 ***Upload Screen***
 
